@@ -1,0 +1,26 @@
+Table media{
+  id number [primary key]
+  path string
+  event_id number
+  created_at date
+  updated_at date
+}
+
+Table events{
+  id number [primary key]
+  address string
+  reporter string
+  city_id number
+  created_at date
+  updated_at date
+}
+
+Table cities{
+  id number [primary key]
+  city_name string
+  created_at date
+  updated_at date
+}
+
+ref: media.event_id > events.id
+ref: events.city_id > cities.id  
