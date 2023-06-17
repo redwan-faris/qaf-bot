@@ -7,7 +7,7 @@ export const myDataSource = new DataSource({
     username: "root",
     password: "root",
     database: "qaf_bot",
-    entities: ["src/entity/*.js"],
+    "entities": ["src/entities/*{.js,.ts}"],
     logging: true,
     synchronize: true,
 })
