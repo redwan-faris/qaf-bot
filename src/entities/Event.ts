@@ -6,15 +6,15 @@ export class Event {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 255 })
+  @Column({ length: 255 ,type:"varchar"})
   address: string;
 
-  @Column({ length: 255 })
+  @Column({ length: 255,type:"varchar" })
   reporter: string;
-
-  @Column({ name: 'city_id' })
-  cityId: number;
-
+ 
+  @Column({length:1000,type:"varchar"})
+  description:string;
+  
   @OneToMany(() => Media, media => media.event)
   media: Media[];
 

@@ -9,4 +9,5 @@ export const myDataSource = new DataSource({
     database: "qaf_bot",
     "entities": ["src/entities/*{.js,.ts}"],
     logging: true, 
+    synchronize:true
 })
