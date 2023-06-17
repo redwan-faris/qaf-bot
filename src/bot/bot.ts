@@ -3,12 +3,18 @@ import { channelPost, message } from "telegraf/filters";
 import dotenv from "dotenv";
 import { Event } from "../entities/Event";
 import { Media } from "../entities/Media";
+import { EventInterface } from "../types/event.type";
 
 
 dotenv.config();
 const token = process.env.BOT_TOKEN;
 let step = "";
-let event = {};
+let event:EventInterface = {
+  description:"",
+  reporter:"",
+  address:"",
+  media:[] as string[]
+};
 if (!token) {
   console.error("BOT_TOKEN is not defined in the environment variables");
   process.exit(1);
@@ -46,6 +52,7 @@ bot.action("reporter", (ctx) => {
       force_reply: true,
     },
   });
+
   step = "location";
 });
 
@@ -62,7 +69,9 @@ bot.action("location", (ctx) => {
 bot.on(message("text"), (ctx) => {
   if (step === "location") {
     const reporterName = ctx.message.text;
-
+    if(reporterName){
+      event.reporter = reporterName;
+    }
     ctx.replyWithHTML("من فضلك أدخل الموقع:", {
       reply_markup: {
         force_reply: true,
@@ -70,6 +79,8 @@ bot.on(message("text"), (ctx) => {
     });
     step = "event";
   } else if (step === "event") {
+    const location = ctx.message.text;
+    event.address = location;
     ctx.replyWithHTML("من فضلك أدخل الحدث:", {
       reply_markup: {
         force_reply: true,
@@ -77,6 +88,8 @@ bot.on(message("text"), (ctx) => {
     });
     step = "media";
   } else if (step == "media") {
+    const description = ctx.message.text;
+    event.description = description;
     ctx.telegram.sendMessage(ctx.chat.id, "هل تريد مشاركة صور او فديوهات تخص الحدث؟", {
       reply_markup: {
         inline_keyboard: [
@@ -109,6 +122,7 @@ bot.action("mediaAccept", (ctx) => {
 
  
 bot.action("mediaDecline", (ctx) => {
+  console.log(event)  
   ctx.deleteMessage();
   ctx.replyWithHTML("شكرا لمشاركتك المعلومات");
   step = "finish";
@@ -121,6 +135,7 @@ bot.on(message("photo"),async  (ctx) => {
     const fileId = photo.file_id;
     const file = await ctx.telegram.getFile(fileId);
     const fileUrl = `https://api.telegram.org/file/bot${token}/${file.file_path}`;
+    event.media.push(fileUrl);
     ctx.telegram.sendMessage(ctx.chat.id, "هل توجد صور  او فديوهات اخرى؟", {
       reply_markup: {
         inline_keyboard: [
