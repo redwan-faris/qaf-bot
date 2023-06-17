@@ -1,5 +1,4 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { City } from "./City";
 import { Media } from "./Media";
 
 @Entity('events')
@@ -15,9 +14,6 @@ export class Event {
 
   @Column({ name: 'city_id' })
   cityId: number;
-
-  @ManyToOne(() => City, city => city.events)
-  city: City;
 
   @OneToMany(() => Media, media => media.event)
   media: Media[];
