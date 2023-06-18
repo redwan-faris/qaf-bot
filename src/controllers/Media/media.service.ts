@@ -34,12 +34,12 @@ export class MediaService {
         }
     }
 
-    async addMedia(media:MediaInterface):Promise<Media> {
+    async addMedia(path:string,id:number):Promise<Media> {
         
         try{
-            const newMedia:Media = new Media()
-            newMedia.path = media.path;
-            newMedia.eventId = media.eventId;
+            const media:Media = new Media()
+            media.path = path;
+            media.eventId = id;
             return await this.mediaRepository.save(media);
         }catch(error:any){
             throw Error(error)   

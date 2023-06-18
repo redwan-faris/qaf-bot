@@ -2,6 +2,10 @@ import { Telegraf, Context } from "telegraf";
 import {  message } from "telegraf/filters";
 import dotenv from "dotenv"; 
 import { EventInterface } from "../types/event.type";
+import { downloadMedia } from "./helpers";
+import { saveEvent, saveMedia } from "./api";
+import { Event } from "../entities/Event";
+
 
 
 dotenv.config();
@@ -119,11 +123,15 @@ bot.action("mediaAccept", (ctx) => {
 
 
  
-bot.action("mediaDecline", (ctx) => {
+bot.action("mediaDecline", async (ctx) => {
   console.log(event)  
   ctx.deleteMessage();
   ctx.replyWithHTML("شكرا لمشاركتك المعلومات");
   step = "finish";
+  let paths = await downloadMedia(event.media);
+  const newEvent:Event = await saveEvent(event);
+  await saveMedia(paths,newEvent.id)
+  console.log(paths)
 });
 
 bot.on(message("photo"),async  (ctx) => {
@@ -153,6 +161,36 @@ bot.on(message("photo"),async  (ctx) => {
   
   }
 });
+
+bot.on(message("video"),async  (ctx) => {
+  if (step === "media") {
+    const photo = ctx.message.video ;
+  
+    const fileId = photo.file_id;
+    const file = await ctx.telegram.getFile(fileId);
+    const fileUrl = `https://api.telegram.org/file/bot${token}/${file.file_path}`;
+ 
+    event.media.push(fileUrl);
+    ctx.telegram.sendMessage(ctx.chat.id, "هل توجد صور  او فديوهات اخرى؟", {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "نعم",
+              callback_data: "mediaAccept",
+            },
+            {
+              text: "لا",
+              callback_data: "mediaDecline",
+            },
+          ],
+        ],
+      },
+    });
+  
+  }
+});
+
 
 bot.use((ctx: Context, next: () => Promise<void>) => {
   console.log("Received update:", ctx.update);
