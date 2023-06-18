@@ -1,8 +1,6 @@
 import { Telegraf, Context } from "telegraf";
-import { channelPost, message } from "telegraf/filters";
-import dotenv from "dotenv";
-import { Event } from "../entities/Event";
-import { Media } from "../entities/Media";
+import {  message } from "telegraf/filters";
+import dotenv from "dotenv"; 
 import { EventInterface } from "../types/event.type";
 
 
