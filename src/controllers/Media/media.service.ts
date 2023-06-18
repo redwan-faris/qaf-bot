@@ -37,8 +37,10 @@ export class MediaService {
     async addMedia(media:MediaInterface):Promise<Media> {
         
         try{
-            const newmedia:Media = await this.mediaRepository.save(media);
-            return newmedia;
+            const newMedia:Media = new Media()
+            newMedia.path = media.path;
+            newMedia.eventId = media.eventId;
+            return await this.mediaRepository.save(media);
         }catch(error:any){
             throw Error(error)   
         }

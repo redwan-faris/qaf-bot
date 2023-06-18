@@ -1,20 +1,21 @@
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import express from "express";
+import { Event } from "../../entities/Event";
 import { Media } from "../../entities/Media";
-import { MediaService } from "./media.service";
+import { EventService } from "./event.service";
 
-const mediaService = new MediaService();
+const mediaService = new EventService();
 
-export class MediaController {
+export class EventController {
  
-  async getMedia(req: express.Request, res: express.Response) {
+  async getEvents(req: express.Request, res: express.Response) {
     try {
-      const medias: Media[] = await mediaService.getAllMedia();
+      const events: Event[] = await mediaService.getAllEvents();
       res.json({
         success: true,
         status: 200,
-        data: medias,
+        data: events,
       });
     } catch (error) {
       console.log(error);
@@ -24,14 +25,14 @@ export class MediaController {
     }
   }
 
-  async getMediaById(req: express.Request, res: express.Response) {
+  async getEventById(req: express.Request, res: express.Response) {
     try {
-      const mediaId: number = +req.params.id;
-      const media = await mediaService.getMediaById(mediaId);
+      const eventId: number = +req.params.id;
+      const event = await mediaService.getEventById(eventId);
       res.status(200).json({
         success: true,
         status: 200,
-        data: media,
+        data: event,
       });
     } catch (error) {
       console.log(error);

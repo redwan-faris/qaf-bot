@@ -2,10 +2,12 @@ import express from 'express';
 import { bot } from './bot/bot';
 import dotenv from 'dotenv';
 import { myDataSource } from './app-data-source';
+import routes from "./views";
 
 dotenv.config();
 const app = express();
- 
+app.use(express.json());
+
 myDataSource
     .initialize()
     .then(() => {
@@ -14,7 +16,8 @@ myDataSource
     .catch((err) => {
         console.error("Error during Data Source initialization:", err)
     })
- 
+app.use('/', routes);
+    
 bot.launch();
 
 const port = process.env.PORT ;
