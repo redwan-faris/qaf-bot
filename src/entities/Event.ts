@@ -9,7 +9,7 @@ export class Event {
   @Column({ length: 255 ,type:"varchar"})
   address: string;
 
-  @Column({ length: 255,type:"varchar" })
+  @Column({ nullable:true, length: 255,type:"varchar" })
   reporter: string;
  
   @Column({length:1000,type:"varchar"})

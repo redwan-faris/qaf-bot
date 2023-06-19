@@ -1,5 +1,4 @@
-export interface MediaInterface {
+export class MediaInterface {
   path: string;
-
-  eventId: number;
+ 
 }

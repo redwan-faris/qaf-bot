@@ -1,6 +1,6 @@
-export interface EventInterface{
-    address: string,
-    reporter:string,
-    description: string,
-    media:string[] 
+export class EventInterface{
+    address: string;
+    reporter:string;
+    description: string;
+    media:string[] ;
 }

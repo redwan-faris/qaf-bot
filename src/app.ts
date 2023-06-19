@@ -2,7 +2,7 @@ import express from 'express';
 import { bot } from './bot/bot';
 import dotenv from 'dotenv';
 import { myDataSource } from './app-data-source';
-import routes from "./views";
+import routes from "./routes";
 
 dotenv.config();
 const app = express();

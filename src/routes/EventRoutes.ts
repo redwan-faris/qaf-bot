@@ -1,9 +1,8 @@
 import { EventController } from "../controllers/event/event.controller";
-import { MediaController } from "../controllers/Media/media.controller";
+import * as express from 'express'
 
-const router = require("express").Router();
-
-//include the Location controller class
+const router = express.Router();
+ 
 const eventController = new  EventController();
 
  

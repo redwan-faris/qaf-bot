@@ -1,8 +1,8 @@
 import { MediaController } from "../controllers/Media/media.controller";
+import * as express from 'express'
 
-const router = require("express").Router();
+const router = express.Router();
 
-//include the Location controller class
 const mediaController = new  MediaController();
 
  
