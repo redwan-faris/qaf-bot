@@ -3,9 +3,9 @@ import {  message } from "telegraf/filters";
 import dotenv from "dotenv"; 
 import { EventInterface } from "../types/event.type";
 import { downloadMedia } from "./helpers";
-import { saveEvent, saveMedia } from "./api";
+import { saveEvent, saveMedia ,getBotMessages} from "./api";
 import { Event } from "../entities/Event";
-
+ 
 
 
 dotenv.config();
@@ -23,6 +23,7 @@ if (!token) {
 }
 
 export const bot = new Telegraf(token);
+ 
 
 bot.command("start", (ctx: Context) => {
   ctx.reply("مرحبا بك في بوت انا مراسل");

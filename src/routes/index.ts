@@ -8,6 +8,5 @@ const routes = Router();
  
 routes.use("/media", MediaRouter);
 routes.use("/events", EventRouter);
-routes.use('/bot-messages',BotMessageRouter)
-
+routes.use('/bot-messages',BotMessageRouter) 
 export default routes;
