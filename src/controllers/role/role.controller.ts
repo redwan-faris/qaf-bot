@@ -34,15 +34,16 @@ export class RoleController {
         status: 200,
         data: role,
       });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        errMessage: "Internal Server Error",
+    } catch (error: any) {
+      res.status(404).json({
+        status: 404,
+        error: error.message,
+        success: false
       });
     }
   }
 
-  async createRole(req: express.Request, res: express.Response){
+  async createRole(req: express.Request, res: express.Response) {
     const dto: RoleDto = plainToInstance(RoleDto, req.body);
     const errors: ValidationError[] = await validate(dto);
 
@@ -68,7 +69,7 @@ export class RoleController {
     });
   }
 
-  async updateRole(req: express.Request, res: express.Response){
+  async updateRole(req: express.Request, res: express.Response) {
     const dto: RoleDto = plainToInstance(RoleDto, req.body);
     const errors: ValidationError[] = await validate(dto);
 
@@ -87,12 +88,20 @@ export class RoleController {
     }
 
     const roleId: number = +req.params.id;
-    const role: Role = await roleService.updateRole(dto, roleId);
-    res.status(200).json({
-      success: true,
-      status: 200,
-      data: role,
-    });
+    try {
+      const role: Role = await roleService.updateRole(dto, roleId);
+      res.status(200).json({
+        success: true,
+        status: 200,
+        data: role,
+      });
+    } catch (error: any) {
+      res.status(404).json({
+        status: 404,
+        error: error.message,
+        success: false
+      });
+    }
   }
 
   async deleteRole(req: express.Request, res: express.Response) {
@@ -100,10 +109,11 @@ export class RoleController {
       const roleId: number = +req.params.id;
       await roleService.deleteRole(roleId);
       res.status(200).json();
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        errMessage: "Internal Server Error",
+    } catch (error:any) {
+      res.status(404).json({
+        status: 404,
+        error: error.message,
+        success: false
       });
     }
   }

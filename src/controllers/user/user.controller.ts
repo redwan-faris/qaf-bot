@@ -33,10 +33,11 @@ export class UserController {
         status: 200,
         data: user,
       });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        errMessage: "Internal Server Error",
+    } catch (error:any) {
+      res.status(404).json({
+        status: 404,
+        error: error.message,
+        success: false
       });
     }
   }
@@ -100,10 +101,11 @@ export class UserController {
         status: 200,
         data: user,
       });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        errMessage: "Internal Server Error",
+    } catch (error:any) {
+      res.status(404).json({
+        status: 404,
+        error: error.message,
+        success: false
       });
     }
   }
@@ -113,10 +115,11 @@ export class UserController {
       const userId: number = +req.params.id;
       await userService.deleteUser(userId);
       res.status(200).json();
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        errMessage: "Internal Server Error",
+    } catch (error:any) {
+      res.status(404).json({
+        status: 404,
+        error: error.message,
+        success: false
       });
     }
   }

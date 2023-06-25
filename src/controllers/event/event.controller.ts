@@ -34,10 +34,11 @@ export class EventController {
         status: 200,
         data: event,
       });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        errMessage: "Internal Server Error",
+    } catch (error:any) {
+      res.status(404).json({
+        status: 404,
+        error: error.message,
+        success: false
       });
     }
   }
