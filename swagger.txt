@@ -1,0 +1,1030 @@
+openapi: 3.0.3
+info:
+  title: Qaf Bot
+  description: Qaf Bot project API
+  version: 1.0.0
+tags:
+  - name: Auth
+    description: API endpoints for auth
+  - name: Bot Messages
+    description: API endpoints for Bot Messages
+  - name: Users
+    description: API endpoints for users
+  - name: Roles
+    description: API endpoints for roles
+  - name: Events
+    description: API endpiont for events
+  - name: Media
+    description: API endpiont for media
+  
+
+paths:
+  /events:
+    get:
+      tags:
+        - Events
+      summary: Events
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+
+  /events/{id}:
+    get:
+      tags:
+        - Events
+      summary: Get an Event by ID
+      parameters:
+        - name: id
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        
+  /media:
+    get:
+      tags:
+        - Media
+      summary: Media
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Media'
+
+  /media/{id}:
+    get:
+      tags:
+        - Media
+      summary: Get Media by ID
+      parameters:
+        - name: id
+          in: path
+          description: Media ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Media'
+  
+
+      
+  /bot_messages:
+    post:
+      tags:
+        - Bot Messages
+      summary: Create a new Bot Message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBotMessageDto'
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BotMessage'
+        '400':
+          description: Duplicated Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: 'This BotMessage already exists'
+                  error:
+                    type: string
+                    example: Bad Request
+
+    get:
+      tags:
+        - Bot Messages
+      summary: Get all Bot Messages
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BotMessage'
+
+  /bot_messages/{id}:
+    get:
+      tags:
+        - Bot Messages
+      summary: Get a BotMessage by ID
+      parameters:
+        - name: id
+          in: path
+          description: BotMessage ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BotMessage'
+        
+  
+  
+
+    patch:
+      tags:
+        - Bot Messages
+      summary: Update a BotMessage
+      parameters:
+        - name: id
+          in: path
+          description: BotMessage ID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBotMessageDto'
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BotMessage'
+        '400':
+          description: Duplicated Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: 'This BotMessage already exists'
+                  error:
+                    type: string
+                    example: Bad Request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: 'BotMessage not found'
+                  error:
+                    type: string
+                    example: Not Found
+
+
+    delete:
+      tags:
+        - Bot Messages
+      summary: Delete a BotMessage
+      parameters:
+        - name: id
+          in: path
+          description: BotMessage ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: No Content
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: 'BotMessage not found'
+                  error:
+                    type: string
+                    example: Not Found
+ 
+
+  /roles:
+    post:
+      tags:
+        - Roles
+      summary: Create a new role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoleDto'
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: 'This role is exist'
+                  error:
+                    type: string
+                    example: Bad Request
+
+    get:
+      tags:
+        - Roles
+      summary: Get all roles
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+
+  /roles/{id}:
+    get:
+      tags:
+        - Roles
+      summary: Get a role by ID
+      parameters:
+        - name: id
+          in: path
+          description: Role ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: 'Role not found'
+                  error:
+                    type: string
+                    example: Not Found
+
+    patch:
+      tags:
+        - Roles
+      summary: Update a role
+      parameters:
+        - name: id
+          in: path
+          description: Role ID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRoleDto'
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: 'This role is exist'
+                  error:
+                    type: string
+                    example: Bad Request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: 'Role not found'
+                  error:
+                    type: string
+                    example: Not Found
+
+    delete:
+      tags:
+        - Roles
+      summary: Delete a role
+      parameters:
+        - name: id
+          in: path
+          description: Role ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: No Content
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: 'Role not found'
+                  error:
+                    type: string
+                    example: Not Found
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDto'
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                    example: 1
+                  email:
+                    type: string
+                    example: john.doe@example.com
+                  role:
+                    type: string
+                    example: admin
+                  organization_id:
+                    type: integer
+                    example: 1
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: 'Email is exist'
+                  error:
+                    type: string
+                    example: Bad Request
+
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get a user by ID
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: 'User not found'
+                  error:
+                    type: string
+                    example: Not Found
+
+    patch:
+      tags:
+        - Users
+      summary: Update a user
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: 'Email is exist'
+                  error:
+                    type: string
+                    example: Bad Request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: 'User not found'
+                  error:
+                    type: string
+                    example: Not Found
+
+    delete:
+      tags:
+        - Users
+      summary: Delete a user
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: 'User not found'
+                  error:
+                    type: string
+                    example: Not Found
+                    
+    
+ 
+  /auth/signin:
+    post:
+      summary: Sign in
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInCrdentialsDto'
+      responses: 
+        '200':
+          description: Successful sign in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /auth/change-password:
+    patch:
+      summary: change password
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordDto'
+      responses: 
+        '200':
+          description: Successful sign in
+           
+        '400':
+          $ref: '#/components/responses/BadRequestErrorPassword'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+      
+  
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JW
+  schemas:
+    
+ 
+    CreateBotMessageDto:
+      type: object
+      properties:
+        message_key:
+          type: string
+          example: "WELCOMING"
+        message_content:
+          type: string
+          example: "hi ti bot"
+
+    UpdateBotMessageDto:
+      type: object
+      properties:
+        message_key:
+          type: string
+          example: "WELCOMING"
+        message_content:
+          type: string
+          example: "hi ti bot"
+
+    BotMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        message_key:
+          type: string
+          example: "WELCOMING"
+        message_content:
+          type: string
+          example: "hi ti bot"
+        created_at:
+          type: string
+          format: date-time
+          example: '2023-05-01T12:34:56Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2023-05-01T12:34:56Z'
+
+    CreateOrganizationDto:
+      type: object
+      properties:
+        organizationName:
+          type: string
+          example: "organization"
+        location:
+          type: string
+          example: "location"
+
+    UpdateOrganizationDto:
+      type: object
+      properties:
+        organizationName:
+          type: string
+          example: "organization"
+          
+        location:
+          type: string
+          example: "location"
+        
+
+    Organization:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        organizationName:
+          type: string
+          example: Organization Name
+        location:
+          type: string
+          example: location
+        created_at:
+          type: string
+          format: date-time
+          example: '2023-05-01T12:34:56Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2023-05-01T12:34:56Z'
+        Bot Messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/BotMessage'
+    
+    CreateUserDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Ali
+        role:
+          type: string
+          example: john.doe
+        username:
+          type: string
+          example: john.doe@example.com
+        password:
+          type: string
+          example: password123
+       
+        
+ 
+
+    UpdateUserDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Ali
+        role:
+          type: string
+          example: john.doe
+        username:
+          type: string
+          example: john.doe@example.com
+        password:
+          type: string
+          example: password123
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Ali
+        username:
+          type: string
+          example: ali123
+        role:
+          type: string
+          example: superadmin
+        created_at:
+          type: string
+          format: date-time
+          example: '2023-05-01T12:34:56Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2023-05-01T12:34:56Z'
+            
+    CreateRoleDto:
+      type: object
+      properties:
+        role_name:
+          type: string
+          example: "admin"
+
+    UpdateRoleDto:
+      type: object
+      properties:
+        role_name:
+          type: string
+          example: "admin"
+  
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        role_name:
+          type: string
+          example: admin
+        created_at:
+          type: string
+          format: date-time
+          example: '2023-05-01T12:34:56Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2023-05-01T12:34:56Z'
+ 
+    ChangePasswordDto:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string   
+  
+
+
+    SignInCrdentialsDto:
+      type: object
+      properties:
+        email:
+          type: string
+          minLength: 4
+          maxLength: 20
+        password:
+          type: string
+          maxLength: 20
+      required:
+        - email
+        - password
+        
+    Event:
+      type: object
+      properties:
+        id:
+          type: number
+        address:
+          type: string
+          maxLength: 255
+        reporter:
+          type: string
+          maxLength: 255
+          nullable: true
+        description:
+          type: string
+          maxLength: 1000
+        media:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time    
+    Media:
+      type: object
+      properties:
+        id:
+          type: number
+        path:
+          type: string
+          maxLength: 255
+      
+        eventId:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    
+    
+  responses:
+    BadRequestError:
+      description: Bad request error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: Bad Request
+    
+    BadRequestErrorPassword:
+      description: Bad request error password
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: Invalid Old Password
+             
+    UnauthorizedError:
+      description: Unauthorized error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+                example: 401
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Unauthorized
+            
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+                example: 500
+              message:
+                type: string
+                example: Internal Server Error
