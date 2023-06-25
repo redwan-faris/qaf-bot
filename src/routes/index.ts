@@ -5,6 +5,7 @@ import EventRouter from './EventRoutes'
 import BotMessageRouter from './BotMessagesRoutes'
 import RoleRoutes from './RoleRoutes'
 import UserRoutes from './UserRoutes'
+import AuthRoutes from './AuthRoutes'
 
 const routes = Router();
  
@@ -14,5 +15,5 @@ routes.use("/events", EventRouter);
 routes.use('/bot-messages',BotMessageRouter) 
 routes.use('/roles',RoleRoutes) 
 routes.use('/users',UserRoutes) 
-
+routes.use('/auth',AuthRoutes) 
 export default routes;

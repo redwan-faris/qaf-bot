@@ -66,7 +66,7 @@ async function seedMessages(connection: Connection) {
         ]
 
         for (const message of messagesToSeed) {
-            await connection.query('INSERT INTO messages (id, message_key, message_content) VALUES (?, ?, ?)', [
+            await connection.query('INSERT INTO bot_messages ( message_key, message_content) VALUES (?, ?)', [
 
                 message.messageKey,
                 message.messageContent,

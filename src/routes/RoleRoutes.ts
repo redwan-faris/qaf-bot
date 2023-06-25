@@ -1,21 +1,23 @@
  
 import * as express from 'express'
 import { RoleController } from '../controllers/role/role.controller'; 
+import { checkJwt } from '../middleware/checkJwt';
+import { checkRole } from '../middleware/checkRole';
 
 
 const router = express.Router();
 const roleController = new  RoleController();
 
  
-router.get("/", roleController.getAllRoles);
+router.get("/",[checkJwt, checkRole(["superadmin"])] , roleController.getAllRoles);
 
-router.get("/:id", roleController.getRoleById);
+router.get("/:id",[checkJwt, checkRole(["superadmin",'admin'])] , roleController.getRoleById);
 
-router.post("/", roleController.createRole);
+router.post("/",[checkJwt, checkRole(["superadmin"])] , roleController.createRole);
 
-router.patch("/:id", roleController.updateRole);
+router.patch("/:id",[checkJwt, checkRole(["superadmin"])] , roleController.updateRole);
 
-router.delete('/:id',roleController.deleteRole);
+router.delete('/:id',[checkJwt, checkRole(["superadmin"])] ,roleController.deleteRole);
 
  
 export default router;
