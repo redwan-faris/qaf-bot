@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('bot-messages')
+@Entity('bot_messages')
 export class BotMessage {
   @PrimaryGeneratedColumn()
   id: number;

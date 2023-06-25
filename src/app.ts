@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-const bot = new Bot();
+export const bot = new Bot();
 bot.start();
 myDataSource
   .initialize()

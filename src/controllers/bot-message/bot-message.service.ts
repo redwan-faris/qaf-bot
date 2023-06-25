@@ -1,8 +1,9 @@
 import { DeleteResult, Repository } from "typeorm";
+import { bot } from "../../app";
 import { myDataSource } from "../../app-data-source"; 
 import { BotMessage } from "../../entities/BotMessage"; 
 import { BotMessageDto } from "../../types/bot-message.type";
- 
+  
 
 export class BotMessageService {
     private readonly botMessagesRepository:Repository<BotMessage>;
@@ -52,7 +53,9 @@ export class BotMessageService {
             const newBotMessages:BotMessage = await this.getBotMessageById(id)
             newBotMessages.messageContent = botMessages.messageContent;
             newBotMessages.messageKey = botMessages.messageKey;
-            return await this.botMessagesRepository.save(newBotMessages);
+            const messages =  await this.botMessagesRepository.save(newBotMessages);
+            bot.updateData();
+            return messages;
         }catch(error:any){
             throw Error(error)   
         }

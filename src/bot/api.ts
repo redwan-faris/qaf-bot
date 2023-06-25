@@ -23,6 +23,6 @@ export const saveEvent = async (event:EventInterface) => {
 export const getBotMessages = async () => {
         const botMessageService:BotMessageService = new BotMessageService();
     const messages:BotMessage[] = await botMessageService.getAllBotMessages();
-    console.log('sss')
+ 
     return messages;
 }

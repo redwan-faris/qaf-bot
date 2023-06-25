@@ -2,6 +2,7 @@ import axios from "axios";
 import fs from 'fs';
 import crypto from 'crypto';
 import path from 'path';
+import { BotMessage } from "../entities/BotMessage";
 
 export const downloadMedia = async (fileUrls: string[]) => {
   const publicDir = path.join(process.cwd(),  'public');
@@ -30,3 +31,13 @@ export const downloadMedia = async (fileUrls: string[]) => {
 
   return paths;
 };
+
+export const  convertToHash = (messages: BotMessage[]) => {
+
+  let hash:any = {};
+  for(let i =0;i<messages.length;i++){
+    hash[messages[i]['messageKey']] = messages[i]['messageContent']
+  } 
+  return hash;
+
+}

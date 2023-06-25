@@ -2,9 +2,10 @@ import { Telegraf, Context } from "telegraf";
 import { message } from "telegraf/filters";
 import dotenv from "dotenv";
 import { EventInterface } from "../types/event.type";
-import { downloadMedia } from "./helpers";
+import { downloadMedia,convertToHash } from "./helpers";
 import { saveEvent, saveMedia, getBotMessages } from "./api";
 import { Event } from "../entities/Event";
+import { BotMessage } from "../entities/BotMessage";
 
 dotenv.config();
 const token = process.env.BOT_TOKEN;
@@ -13,7 +14,7 @@ export class Bot {
   private bot: Telegraf<Context>;
   private step: string;
   private event: EventInterface;
-
+  private data:any;
   constructor() {
     if (!token) {
       console.error("BOT_TOKEN is not defined in the environment variables");
@@ -28,29 +29,37 @@ export class Bot {
       address: "",
       media: [] as string[],
     };
-
+    this.updateData();
     this.setupCommands();
     this.setupActions();
     this.setupMessageHandlers();
     this.setupMiddleware();
   }
 
+  public updateData(){
+    setTimeout(() => {
+      getBotMessages().then((result) => {
+        this.data = convertToHash(result);
+      });
+    }, 1000);
+  }
+
   private setupCommands(): void {
     this.bot.command("start", (ctx: Context) => {
-      ctx.reply("مرحبا بك في بوت انا مراسل");
+      ctx.reply(this.data['CREETING']);
     });
 
-    this.bot.command("option1", (ctx) => {
-      ctx.telegram.sendMessage(ctx.chat.id, "كيف تريد ارسال المعلومات؟", {
+    this.bot.command("send", (ctx) => {
+      ctx.telegram.sendMessage(ctx.chat.id, this.data['SENDER_TYPE_QUESTION'], {
         reply_markup: {
           inline_keyboard: [
             [
               {
-                text: "انا مراسل",
+                text: this.data['REPORTER'],
                 callback_data: "reporter",
               },
               {
-                text: "انا مدون",
+                text: this.data['BLOGGER'],
                 callback_data: "location",
               },
             ],
@@ -63,7 +72,7 @@ export class Bot {
   private setupActions(): void {
     this.bot.action("reporter", (ctx) => {
       ctx.deleteMessage();
-      ctx.replyWithHTML("من فضلك اكتب اسم المراسل:", {
+      ctx.replyWithHTML(this.data['REPORTER_NAME_QUESTION'], {
         reply_markup: {
           force_reply: true,
         },
@@ -74,7 +83,7 @@ export class Bot {
 
     this.bot.action("location", (ctx) => {
       ctx.deleteMessage();
-      ctx.replyWithHTML("من فضلك أدخل الموقع:", {
+      ctx.replyWithHTML(this.data['LOCATION_NAME_QUESTION'], {
         reply_markup: {
           force_reply: true,
         },
@@ -84,7 +93,7 @@ export class Bot {
 
     this.bot.action("mediaAccept", (ctx) => {
       ctx.deleteMessage();
-      ctx.replyWithHTML("من فضلك أدخل الصورة او الفديو", {
+      ctx.replyWithHTML(this.data['MEDIA_QUESTION'], {
         reply_markup: {
           force_reply: true,
         },
@@ -94,12 +103,11 @@ export class Bot {
 
     this.bot.action("mediaDecline", async (ctx) => {
       ctx.deleteMessage();
-      ctx.replyWithHTML("شكرا لمشاركتك المعلومات");
+      ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX']);
       this.step = "finish";
       let paths = await downloadMedia(this.event.media);
       const newEvent: Event = await saveEvent(this.event);
-      await saveMedia(paths, newEvent);
-      console.log(paths);
+      await saveMedia(paths, newEvent); 
     });
   }
 
@@ -110,7 +118,7 @@ export class Bot {
         if (reporterName) {
           this.event.reporter = reporterName;
         }
-        ctx.replyWithHTML("من فضلك أدخل الموقع:", {
+        ctx.replyWithHTML(this.data['LOCATION_NAME_QUESTION'], {
           reply_markup: {
             force_reply: true,
           },
@@ -119,7 +127,7 @@ export class Bot {
       } else if (this.step === "event") {
         const location = ctx.message.text;
         this.event.address = location;
-        ctx.replyWithHTML("من فضلك أدخل الحدث:", {
+        ctx.replyWithHTML(this.data['EVENT_NAME_QUESTION'], {
           reply_markup: {
             force_reply: true,
           },
@@ -128,16 +136,16 @@ export class Bot {
       } else if (this.step == "media") {
         const description = ctx.message.text;
         this.event.description = description;
-        ctx.telegram.sendMessage(ctx.chat.id, "هل تريد مشاركة صور او فديوهات تخص الحدث؟", {
+        ctx.telegram.sendMessage(ctx.chat.id, this.data['MEDIA_QUESTION'], {
           reply_markup: {
             inline_keyboard: [
               [
                 {
-                  text: "نعم",
+                  text: this.data['MEDIA_ACCEPT'],
                   callback_data: "mediaAccept",
                 },
                 {
-                  text: "لا",
+                  text: this.data['MEDIA_DECLINE'],
                   callback_data: "mediaDecline",
                 },
               ],
@@ -155,7 +163,7 @@ export class Bot {
         const file = await ctx.telegram.getFile(fileId);
         const fileUrl = `https://api.telegram.org/file/bot${token}/${file.file_path}`;
         this.event.media.push(fileUrl);
-        ctx.telegram.sendMessage(ctx.chat.id, "هل توجد صور  او فديوهات اخرى؟", {
+        ctx.telegram.sendMessage(ctx.chat.id, this.data['SECOND_MEDIA_QUESTION'], {
           reply_markup: {
             inline_keyboard: [
               [
@@ -183,7 +191,7 @@ export class Bot {
         const fileUrl = `https://api.telegram.org/file/bot${token}/${file.file_path}`;
 
         this.event.media.push(fileUrl);
-        ctx.telegram.sendMessage(ctx.chat.id, "هل توجد صور  او فديوهات اخرى؟", {
+        ctx.telegram.sendMessage(ctx.chat.id, this.data['SECOND_MEDIA_QUESTION'], {
           reply_markup: {
             inline_keyboard: [
               [
@@ -211,9 +219,8 @@ export class Bot {
   }
 
   public async start(): Promise<void> {
+  
     await this.bot.launch();
     console.log("Bot is running...");
   }
 }
-
- 
