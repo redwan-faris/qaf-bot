@@ -1,5 +1,5 @@
-import { IsNotEmpty } from "class-validator";
 
+import { IsNotEmpty } from "class-validator";
 
 export class RoleDto{
    
@@ -7,3 +7,4 @@ export class RoleDto{
     role_name: string;
  
 }
+ 

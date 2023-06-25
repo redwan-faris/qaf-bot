@@ -12,14 +12,13 @@ import {
   import { Exclude, Transform } from 'class-transformer';
 import { Role } from './Role';
   
-  @Entity('users')
-  @Unique(['email'])
+  @Entity('users') 
   export class User {
     @PrimaryGeneratedColumn()
     id: number;
   
     @Column({ type: 'varchar', length: 255 })
-    email: string;
+    username: string;
   
     @Column({ type: 'varchar', length: 255 })
     name: string;
