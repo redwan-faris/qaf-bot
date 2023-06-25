@@ -131,7 +131,7 @@ bot.action("mediaDecline", async (ctx) => {
   step = "finish";
   let paths = await downloadMedia(event.media);
   const newEvent:Event = await saveEvent(event);
-  await saveMedia(paths,newEvent.id)
+  await saveMedia(paths,newEvent)
   console.log(paths)
 });
 

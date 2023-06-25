@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Event } from './Event';
 
 @Entity('media')
@@ -9,11 +9,12 @@ export class Media {
   @Column({ length: 255 })
   path: string;
 
+  @ManyToOne(() => Event, event => event.media)
+  @JoinColumn({ name: 'event_id' })
+  event: Event;
+
   @Column({ name: 'event_id' })
   eventId: number;
-
-  @ManyToOne(() => Event, event => event.media)
-  event: Event;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

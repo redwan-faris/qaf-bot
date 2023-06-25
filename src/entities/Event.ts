@@ -15,7 +15,7 @@ export class Event {
   @Column({length:1000,type:"varchar"})
   description:string;
   
-  @OneToMany(() => Media, media => media.event)
+  @OneToMany(() => Media, media => media.event,{eager:true})
   media: Media[];
 
   @CreateDateColumn({ name: 'created_at' })

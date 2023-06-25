@@ -1,5 +1,6 @@
 import { Repository } from "typeorm";
 import { myDataSource } from "../../app-data-source"; 
+import { Event } from "../../entities/Event";
 import { Media } from "../../entities/Media";
 import { MediaInterface } from "../../types/media.type";
 
@@ -34,12 +35,12 @@ export class MediaService {
         }
     }
 
-    async addMedia(path:string,id:number):Promise<Media> {
+    async addMedia(path:string,event:Event):Promise<Media> {
         
         try{
             const media:Media = new Media()
             media.path = path;
-            media.eventId = id;
+            media.event = event;
             return await this.mediaRepository.save(media);
         }catch(error:any){
             throw Error(error)   
