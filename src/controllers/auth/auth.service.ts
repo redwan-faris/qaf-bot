@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
-import * as jwt from "jsonwebtoken";
-import { validate } from "class-validator";
+import dotenv from 'dotenv';
+import * as jwt from "jsonwebtoken"; 
 import { User } from "../../entities/User";
 import { Repository } from "typeorm";
 import { myDataSource } from "../../app-data-source";
 import { SignInDto } from "../../types/sign-in.type";
  
+dotenv.config();
 
 class AuthService {
     private readonly userRepository:Repository<User>;
@@ -21,7 +21,7 @@ class AuthService {
         }
         const token:string = jwt.sign(
             { userId: user.id, username: user.username,role:user.role.role_name },
-            "config.jwtSecret",
+            process.env.JWT_SECRET as string
           );
       return {token,user};
     }

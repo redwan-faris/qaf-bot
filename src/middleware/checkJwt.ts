@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
   const token = <string>req.headers.authorization?.substring(7);
@@ -7,11 +9,11 @@ export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
   let jwtPayload;
 
   try {
-    jwtPayload = <any>jwt.verify(token, "config.jwtSecret");
+    jwtPayload = <any>jwt.verify(token,    process.env.JWT_SECRET as string);
     res.locals.jwtPayload = jwtPayload;
 
     const { userId, username ,role} = jwtPayload;
-    const newToken = jwt.sign({ userId, username ,role}, "config.jwtSecret");
+    const newToken = jwt.sign({ userId, username ,role},     process.env.JWT_SECRET as string);
     res.setHeader("token", newToken);
 
     next();

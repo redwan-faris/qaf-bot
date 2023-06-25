@@ -6,7 +6,7 @@ const router = express.Router();
 const authController:AuthController = new  AuthController();
 
  
-router.post("/",authController.signIn);
+router.post("/signin",authController.signIn);
 
  
  
