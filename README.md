@@ -38,6 +38,8 @@ $  ext install Gruntfuggly.todo-tree
 ### Endpoint Visualization
 
  To view the swagger design copy the swagger content to [Swagger](https://editor.swagger.io/) .
+
+ Or just import the swagger.yaml file in the postman 
  
  
 
