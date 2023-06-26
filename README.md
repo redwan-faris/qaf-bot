@@ -15,7 +15,7 @@ $ npm run db:seed
 # development
 $ npm start
  ```
-## seed database
+## Todos 
 
 ```bash
   # RUN THIS COMMAN ON CRLT-P IN VS CODE TO USE TODO EXTENTION FOR TRACKING TODOS IN THE PROJECT
