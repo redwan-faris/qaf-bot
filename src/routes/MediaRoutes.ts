@@ -2,6 +2,7 @@ import { MediaController } from "../controllers/Media/media.controller";
 import * as express from 'express'
 import { checkRole } from "../middleware/checkRole";
 import { checkJwt } from "../middleware/checkJwt";
+ 
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ router.get("/", [checkJwt, checkRole(["superadmin", "admin"])], mediaController.
 
 router.get("/:id", [checkJwt, checkRole(["superadmin", "admin"])], mediaController.getMediaById);
 
-
+router.get('/download/:filePath',checkRole(["superadmin", "admin"]), mediaController.downloadMedia);
 
 
 

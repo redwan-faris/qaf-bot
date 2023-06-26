@@ -1,6 +1,7 @@
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import express from "express";
+import path from "path";
 import { Media } from "../../entities/Media";
 import { MediaService } from "./media.service";
 
@@ -33,13 +34,30 @@ export class MediaController {
         status: 200,
         data: media,
       });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        errMessage: "Internal Server Error",
+    } catch (error:any) {
+      res.status(404).json({
+        status: 404,
+        error: error.message,
+        success: false
       });
     }
   }
 
+  downloadMedia(req: express.Request, res: express.Response) {
+    const filePath = req.params.filePath; // Get the file path from the URL parameter
+    const publicDir = path.join(process.cwd(),  'public',filePath);
+     
+    res.download(publicDir, (err) => {
+      if (err) {
+        // Handle error, such as file not found
+        console.error('File download error:', err);
+        res.status(404).json({
+          status: 404,
+          error: "File not found",
+          success: false
+        });
+      }
+    });
+  }
    
 }

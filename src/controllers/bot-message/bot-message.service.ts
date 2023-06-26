@@ -39,8 +39,8 @@ export class BotMessageService {
         
         try{
             const newBotMessages:BotMessage = new BotMessage();
-            newBotMessages.messageContent = botMessages.messageContent;
-            newBotMessages.messageKey = botMessages.messageKey;
+            newBotMessages.messageContent = botMessages.message_content;
+            newBotMessages.messageKey = botMessages.message_key;
             return await this.botMessagesRepository.save(newBotMessages);
         }catch(error:any){
             throw Error(error)   
@@ -51,8 +51,8 @@ export class BotMessageService {
         
         try{
             const newBotMessages:BotMessage = await this.getBotMessageById(id)
-            newBotMessages.messageContent = botMessages.messageContent;
-            newBotMessages.messageKey = botMessages.messageKey;
+            newBotMessages.messageContent = botMessages.message_content;
+            newBotMessages.messageKey = botMessages.message_key;
             const messages =  await this.botMessagesRepository.save(newBotMessages);
             bot.updateData();
             return messages;

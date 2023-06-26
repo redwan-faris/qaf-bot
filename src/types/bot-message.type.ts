@@ -4,8 +4,8 @@ import { IsNotEmpty } from "class-validator";
 export class BotMessageDto{
    
     @IsNotEmpty()
-    messageKey: string;
+    message_key: string;
   
     @IsNotEmpty()
-    messageContent: string;
+    message_content: string;
 }

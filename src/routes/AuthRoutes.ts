@@ -8,6 +8,8 @@ const authController:AuthController = new  AuthController();
  
 router.post("/signin",authController.signIn);
 
+router.post("/change-password",authController.changePassword);
+
  
  
  

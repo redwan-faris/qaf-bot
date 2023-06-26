@@ -13,7 +13,7 @@ router.get("/", [checkJwt, checkRole(["superadmin","admin"])] , eventController.
  
 router.get("/:id", [checkJwt, checkRole(["superadmin","admin"])] , eventController.getEventById);
 
- 
+
  
 
  
