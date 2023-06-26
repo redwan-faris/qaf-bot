@@ -6,7 +6,7 @@ import { Media } from "../../entities/Media";
 import { EventService } from "./event.service";
 
 const mediaService = new EventService();
-
+// TODO make helper to handle response
 export class EventController {
  
   async getEvents(req: express.Request, res: express.Response) {

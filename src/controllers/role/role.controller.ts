@@ -6,7 +6,7 @@ import { RoleDto } from "../../types/role.type";
 import { RoleService } from "./role.service";
 
 const roleService = new RoleService();
-
+// TODO make helper to handle response
 export class RoleController {
 
   async getAllRoles(req: express.Request, res: express.Response) {
@@ -73,6 +73,7 @@ export class RoleController {
     const dto: RoleDto = plainToInstance(RoleDto, req.body);
     const errors: ValidationError[] = await validate(dto);
 
+        // TODO make helper to handle the validation
     if (errors.length > 0) {
       const validationErrors: any[] = [];
       errors.forEach((error: ValidationError) => {

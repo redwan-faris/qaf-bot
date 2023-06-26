@@ -6,7 +6,7 @@ import { BotMessageDto } from "../../types/bot-message.type";
 import { BotMessageService } from "./bot-message.service";
 
 const botMessagesService = new BotMessageService();
-
+// TODO make helper to handle response
 export class BotMessageController {
 
   async getBotMessages(req: express.Request, res: express.Response) {
@@ -75,7 +75,7 @@ export class BotMessageController {
     const dto: BotMessageDto = plainToInstance(BotMessageDto, req.body);
     const errors: ValidationError[] = await validate(dto);
 
-
+    // TODO make helper to handle the validation
     if (errors.length > 0) {
       const validationErrors: any[] = [];
       errors.forEach((error: ValidationError) => {

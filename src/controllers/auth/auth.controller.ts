@@ -5,6 +5,7 @@ import { plainToInstance } from "class-transformer";
 import { SignInDto } from "../../types/sign-in.type";
 import { ChangePasswordDto } from "../../types/change-password.type";
 const authService: AuthService = new AuthService();
+// TODO make helper to handle response
 class AuthController {
 
   async signIn(req: express.Request, res: express.Response) {
@@ -49,6 +50,7 @@ class AuthController {
     const dto: ChangePasswordDto = plainToInstance(ChangePasswordDto, req.body);
     const errors: ValidationError[] = await validate(dto);
 
+    // TODO make helper to handle the validation
 
     if (errors.length > 0) {
       const validationErrors: any[] = [];

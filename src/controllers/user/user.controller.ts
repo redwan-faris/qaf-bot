@@ -6,7 +6,7 @@ import { UserDto } from "../../types/user.type";
 import { User } from "../../entities/User";
 
 const userService = new UserService();
-
+// TODO make helper to handle response
 export class UserController {
   async getAllUsers(req: express.Request, res: express.Response) {
     try {
@@ -78,7 +78,7 @@ export class UserController {
   async updateUser(req: express.Request, res: express.Response) {
     const dto: UserDto = plainToInstance(UserDto, req.body);
     const errors: ValidationError[] = await validate(dto);
-
+    // TODO make helper to handle the validation
     if (errors.length > 0) {
       const validationErrors: any[] = [];
       errors.forEach((error: ValidationError) => {
