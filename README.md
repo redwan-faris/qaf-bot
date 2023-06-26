@@ -1,10 +1,4 @@
-# Telegram Bot for Qaf lab 
-
-## Description
-
-The project is build with Telegraf - Typescript - express and typeorm
-
-## Installation
+ ## Installation
 
 ```bash
 $ npm install
@@ -14,11 +8,24 @@ $ npm install
 ```bash
 # development
 $ npm start
+ 
+ 
+
+## Response
+
+```bash
+{
+  success:[true or false],
+  status :[status code],
+  data:[]
+}
 ```
-
-
 ## Documentation
+ 
+### Endpoint Visualization
 
-### Database Design Visualization
+ To view the swagger design copy the swagger content to [Swagger](https://editor.swagger.io/) .
+ 
+## License
 
- To view the database design copy the database content to [DbDiagram](https://dbdiagram.io/d) .
+ 
