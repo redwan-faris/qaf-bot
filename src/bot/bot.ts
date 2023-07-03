@@ -4,8 +4,8 @@ import dotenv from "dotenv";
 import { EventInterface } from "../types/event.type";
 import { downloadMedia,convertToHash } from "./helpers";
 import { saveEvent, saveMedia, getBotMessages } from "./api";
-import { Event } from "../entities/Event";
-import { BotMessage } from "../entities/BotMessage";
+import { Event } from "../entities/Event"; 
+import { TypeEnum } from "../enums/TypeEnum";
 
 dotenv.config();
 const token = process.env.BOT_TOKEN;
@@ -24,6 +24,7 @@ export class Bot {
     this.bot = new Telegraf(token);
     this.step = "";
     this.event = {
+      type: TypeEnum.BLOGGER,
       description: "",
       reporter: "",
       address: "",
@@ -60,7 +61,7 @@ export class Bot {
               },
               {
                 text: this.data['BLOGGER'],
-                callback_data: "location",
+                callback_data: "blogger",
               },
             ],
           ],
@@ -77,7 +78,18 @@ export class Bot {
           force_reply: true,
         },
       });
+      this.event.type = TypeEnum.REPORTER;
+      this.step = "location";
+    });
 
+    this.bot.action("blogger", (ctx) => {
+      ctx.deleteMessage();
+      ctx.replyWithHTML(this.data['REPORTER_NAME_QUESTION'], {
+        reply_markup: {
+          force_reply: true,
+        },
+      });
+      this.event.type = TypeEnum.BLOGGER;
       this.step = "location";
     });
 

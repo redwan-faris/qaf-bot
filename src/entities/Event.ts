@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Media } from "./Media";
+import { TypeEnum } from "../enums/TypeEnum";
 
 @Entity('events')
 export class Event {
@@ -8,6 +9,9 @@ export class Event {
 
   @Column({ length: 255 ,type:"varchar"})
   address: string;
+
+  @Column({ type: 'enum', enum: TypeEnum})
+  type: TypeEnum;
 
   @Column({ nullable:true, length: 255,type:"varchar" })
   reporter: string;
