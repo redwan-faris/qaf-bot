@@ -46,8 +46,7 @@ export class MemberService {
 
     async addMember(memberDto: MemberDto): Promise<Member> {
         try {
-            console.log('this is member dto')
-            console.log(memberDto)
+         
             const member: Member = new Member();
             member.full_name = memberDto.full_name;
             member.memberId = memberDto.memberId;
@@ -57,5 +56,6 @@ export class MemberService {
             throw Error(error)
         }
     }
+ 
 
 }

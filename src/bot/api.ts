@@ -5,6 +5,8 @@ import { BotMessage } from "../entities/BotMessage";
 import { Event } from "../entities/Event";
 import { EventInterface } from "../types/event.type";
 import { MediaInterface } from "../types/media.type"
+import { MemberService } from '../controllers/member/member.service';
+import { Member } from '../entities/Member';
 
 
 
@@ -26,3 +28,9 @@ export const getBotMessages = async () => {
  
     return messages;
 }
+
+export const checkIfUserExist = async (id:number) => {
+    const memberService : MemberService = new MemberService();
+    const member : Member | null= await memberService.getMemberByTelegramId(id);
+    return member;
+} 

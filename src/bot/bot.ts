@@ -2,12 +2,15 @@ import { Telegraf, Context } from "telegraf";
 import { message } from "telegraf/filters";
 import dotenv from "dotenv";
 import { EventInterface } from "../types/event.type";
-import { downloadMedia,convertToHash } from "./helpers";
-import { saveEvent, saveMedia, getBotMessages } from "./api";
-import { Event } from "../entities/Event"; 
+import { downloadMedia, convertToHash } from "./helpers";
+import { saveEvent, saveMedia, getBotMessages, checkIfUserExist } from './api';
+import { Event } from "../entities/Event";
 import { TypeEnum } from "../enums/TypeEnum";
 import { MemberDto } from "../types/member.type";
+import { Member } from '../entities/Member';
 
+
+// TODO refactor the bot code 
 dotenv.config();
 const token = process.env.BOT_TOKEN;
 
@@ -15,7 +18,8 @@ export class Bot {
   private bot: Telegraf<Context>;
   private step: string;
   private event: EventInterface;
-  private data:any;
+  private data: any;
+  private member: Member | null;
   constructor() {
     if (!token) {
       console.error("BOT_TOKEN is not defined in the environment variables");
@@ -27,9 +31,9 @@ export class Bot {
     this.event = {
       type: TypeEnum.BLOGGER,
       description: "",
-      member:{
-        full_name:'',
-        memberId:0,
+      member: {
+        full_name: '',
+        memberId: 0,
       },
       address: "",
       media: [] as string[],
@@ -41,7 +45,7 @@ export class Bot {
     this.setupMiddleware();
   }
 
-  public updateData(){
+  public updateData() {
     setTimeout(() => {
       getBotMessages().then((result) => {
         this.data = convertToHash(result);
@@ -51,10 +55,21 @@ export class Bot {
 
   private setupCommands(): void {
     this.bot.command("start", (ctx: Context) => {
+      if (ctx.message && ctx.message.from) {
+        const userId = ctx.message.from.id;
+        this.event.member.memberId = userId
+      }
       ctx.reply(this.data['CREETING']);
     });
 
-    this.bot.command("send", (ctx) => {
+    this.bot.command("send", async (ctx) => {
+
+      if (ctx.message && ctx.message.from) {
+        const userId = ctx.message.from.id;
+        this.event.member.memberId = userId
+        this.member = await checkIfUserExist(this.event.member.memberId);
+      }
+
       ctx.telegram.sendMessage(ctx.chat.id, this.data['SENDER_TYPE_QUESTION'], {
         reply_markup: {
           inline_keyboard: [
@@ -75,34 +90,50 @@ export class Bot {
   }
 
   private setupActions(): void {
-    this.bot.use((ctx, next) => {
-  
-      if (ctx.message && ctx.message.from) {
-        const userId = ctx.message.from.id;
-        this.event.member.memberId = userId
-      }
-      return next();
-    });
+
     this.bot.action("reporter", (ctx) => {
       ctx.deleteMessage();
-      ctx.replyWithHTML(this.data['REPORTER_NAME_QUESTION'], {
-        reply_markup: {
-          force_reply: true,
-        },
-      });
+
+      if (this.member) {
+        this.event.member.full_name = this.member.full_name;
+        ctx.replyWithHTML(this.data['LOCATION_NAME_QUESTION'], {
+          reply_markup: {
+            force_reply: true,
+          },
+        });
+        this.step = "event";
+      } else {
+        ctx.replyWithHTML(this.data['REPORTER_NAME_QUESTION'], {
+          reply_markup: {
+            force_reply: true,
+          },
+        });
+        this.step = "location";
+      }
       this.event.type = TypeEnum.REPORTER;
-      this.step = "location";
+
     });
 
     this.bot.action("blogger", (ctx) => {
       ctx.deleteMessage();
-      ctx.replyWithHTML(this.data['REPORTER_NAME_QUESTION'], {
-        reply_markup: {
-          force_reply: true,
-        },
-      });
+      if (this.member) {
+        this.event.member.full_name = this.member.full_name;
+        ctx.replyWithHTML(this.data['LOCATION_NAME_QUESTION'], {
+          reply_markup: {
+            force_reply: true,
+          },
+        });
+        this.step = "event";
+      } else {
+        ctx.replyWithHTML(this.data['REPORTER_NAME_QUESTION'], {
+          reply_markup: {
+            force_reply: true,
+          },
+        });
+        this.step = "location";
+      }
       this.event.type = TypeEnum.BLOGGER;
-      this.step = "location";
+
     });
 
     this.bot.action("location", (ctx) => {
@@ -126,14 +157,14 @@ export class Bot {
     });
 
     this.bot.action("mediaDecline", async (ctx) => {
-     
+
       ctx.deleteMessage();
       ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX']);
       this.step = "finish";
       console.log(this.event)
       let paths = await downloadMedia(this.event.media);
       const newEvent: Event = await saveEvent(this.event);
-      await saveMedia(paths, newEvent); 
+      await saveMedia(paths, newEvent);
     });
   }
 
@@ -238,16 +269,16 @@ export class Bot {
   }
 
   private setupMiddleware(): void {
- 
+
     this.bot.use((ctx, next) => {
-  
+
       if (ctx.message && ctx.message.from) {
         const userId = ctx.message.from.id;
         this.event.member.memberId = userId
         console.log('-----')
         console.log(userId)
       }
-      else{
+      else {
         console.log('----------fuck----------')
       }
       return next();
@@ -255,7 +286,7 @@ export class Bot {
   }
 
   public async start(): Promise<void> {
-  
+
     await this.bot.launch();
     console.log("Bot is running...");
   }

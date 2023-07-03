@@ -8,7 +8,7 @@ import { EventService } from "./event.service";
 const mediaService = new EventService();
 // TODO make helper to handle response
 export class EventController {
- 
+
   async getEvents(req: express.Request, res: express.Response) {
     try {
       const events: Event[] = await mediaService.getAllEvents();
@@ -34,7 +34,7 @@ export class EventController {
         status: 200,
         data: event,
       });
-    } catch (error:any) {
+    } catch (error: any) {
       res.status(404).json({
         status: 404,
         error: error.message,
@@ -43,5 +43,5 @@ export class EventController {
     }
   }
 
-   
+
 }
