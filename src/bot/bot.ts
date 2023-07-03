@@ -6,6 +6,7 @@ import { downloadMedia,convertToHash } from "./helpers";
 import { saveEvent, saveMedia, getBotMessages } from "./api";
 import { Event } from "../entities/Event"; 
 import { TypeEnum } from "../enums/TypeEnum";
+import { MemberDto } from "../types/member.type";
 
 dotenv.config();
 const token = process.env.BOT_TOKEN;
@@ -26,7 +27,10 @@ export class Bot {
     this.event = {
       type: TypeEnum.BLOGGER,
       description: "",
-      reporter: "",
+      member:{
+        full_name:'',
+        memberId:0,
+      },
       address: "",
       media: [] as string[],
     };
@@ -71,6 +75,14 @@ export class Bot {
   }
 
   private setupActions(): void {
+    this.bot.use((ctx, next) => {
+  
+      if (ctx.message && ctx.message.from) {
+        const userId = ctx.message.from.id;
+        this.event.member.memberId = userId
+      }
+      return next();
+    });
     this.bot.action("reporter", (ctx) => {
       ctx.deleteMessage();
       ctx.replyWithHTML(this.data['REPORTER_NAME_QUESTION'], {
@@ -114,9 +126,11 @@ export class Bot {
     });
 
     this.bot.action("mediaDecline", async (ctx) => {
+     
       ctx.deleteMessage();
       ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX']);
       this.step = "finish";
+      console.log(this.event)
       let paths = await downloadMedia(this.event.media);
       const newEvent: Event = await saveEvent(this.event);
       await saveMedia(paths, newEvent); 
@@ -128,7 +142,7 @@ export class Bot {
       if (this.step === "location") {
         const reporterName = ctx.message.text;
         if (reporterName) {
-          this.event.reporter = reporterName;
+          this.event.member.full_name = reporterName;
         }
         ctx.replyWithHTML(this.data['LOCATION_NAME_QUESTION'], {
           reply_markup: {
@@ -224,8 +238,18 @@ export class Bot {
   }
 
   private setupMiddleware(): void {
-    this.bot.use((ctx: Context, next: () => Promise<void>) => {
-      console.log("Received update:", ctx.update);
+ 
+    this.bot.use((ctx, next) => {
+  
+      if (ctx.message && ctx.message.from) {
+        const userId = ctx.message.from.id;
+        this.event.member.memberId = userId
+        console.log('-----')
+        console.log(userId)
+      }
+      else{
+        console.log('----------fuck----------')
+      }
       return next();
     });
   }
