@@ -11,11 +11,15 @@ export class EventController {
 
   async getEvents(req: express.Request, res: express.Response) {
     try {
-      const events: Event[] = await mediaService.getAllEvents();
+      const page = parseInt(req.query.page as string, 10) || 1; // Current page number, default to 1 if not provided
+      const limit = parseInt(req.query.limit as string, 10) || 10; // Number of records per page, default to 10 if not provided
+
+      const events= await mediaService.getAllEvents(page,limit);
       res.json({
         success: true,
         status: 200,
-        data: events,
+        count:events.count,
+        data: events.events,
       });
     } catch (error) {
       console.log(error);
