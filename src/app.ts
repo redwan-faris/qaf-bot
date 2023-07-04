@@ -9,7 +9,9 @@ const app = express();
 app.use(express.json());
 
 export const bot = new Bot();
+
 bot.start();
+
 myDataSource
   .initialize()
   .then(() => {
