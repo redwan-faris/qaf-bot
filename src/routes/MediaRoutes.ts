@@ -14,7 +14,7 @@ router.get("/", [checkJwt, checkRole(["superadmin", "admin"])], mediaController.
 
 router.get("/:id", [checkJwt, checkRole(["superadmin", "admin"])], mediaController.getMediaById);
 
-router.get('/download/:filePath',checkRole(["superadmin", "admin"]), mediaController.downloadMedia);
+router.get('/download/:filePath',[checkJwt,checkRole(["superadmin", "admin"])], mediaController.downloadMedia);
 
 
 

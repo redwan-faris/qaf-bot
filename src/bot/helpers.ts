@@ -29,9 +29,9 @@ export const downloadMedia = async (fileUrls: string[]) => {
         });
         if (type == 'pictures') {
           generateThumbnail(uniqueFilename, 640);
-          paths.push(uniqueFilename);
+    
         }
-
+        paths.push(uniqueFilename);
       }
 
     } catch (error) {

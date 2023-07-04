@@ -44,12 +44,13 @@ export class MediaController {
   }
 
   downloadMedia(req: express.Request, res: express.Response) {
-    const filePath = req.params.filePath; // Get the file path from the URL parameter
-    const publicDir = path.join(process.cwd(),  'public',filePath);
-     
+    const filePath = req.params.filePath; 
+    const type = req.query.type;
+    const version = req.query.version;
+    const publicDir = path.join(process.cwd(),  `public/${type}/${version}`,filePath);
+    console.log(publicDir)
     res.download(publicDir, (err) => {
-      if (err) {
-        // Handle error, such as file not found
+      if (err) { 
         console.error('File download error:', err);
         res.status(404).json({
           status: 404,
