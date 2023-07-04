@@ -24,7 +24,8 @@ export class Bot {
     if (!token) {
       console.error("BOT_TOKEN is not defined in the environment variables");
       process.exit(1);
-    } 
+    }
+ 
     this.bot = new Telegraf(token);
     this.step = "";
     this.event = {
