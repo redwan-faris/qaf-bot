@@ -63,7 +63,6 @@ export class Bot {
     });
 
     this.bot.command("send", async (ctx) => {
-
       if (ctx.message && ctx.message.from) {
         const userId = ctx.message.from.id;
         this.event.member.memberId = userId
