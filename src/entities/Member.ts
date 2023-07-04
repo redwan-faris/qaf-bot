@@ -6,8 +6,8 @@ export class Member {
     @PrimaryGeneratedColumn() 
     id:number;
 
-    @Column({type:'bigint',name:'member_id'})
-    memberId: number;
+    @Column({type:'bigint',name:'user_bot_id'})
+    userBotId: number;
 
     @Column({type:'varchar',name:'full_name'})
     full_name:string;

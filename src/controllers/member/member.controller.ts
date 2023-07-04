@@ -10,10 +10,10 @@ export class MemberController {
   async getMembers(req: express.Request, res: express.Response) {
     try {
       const members: Member[] = await memberService.getAllMembers();
-      res.json({
+      res.json({ 
         success: true,
         status: 200,
-        data: MemberService,
+        data: members,
       });
       return members;
     } catch (error) {

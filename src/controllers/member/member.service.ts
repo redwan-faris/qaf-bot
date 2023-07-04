@@ -14,7 +14,7 @@ export class MemberService {
     // TODO Refactor the function
     async getMemberByTelegramId(id: number): Promise<Member | null> {
         console.log('-------------------------------------------')
-        const member: Member | null = await this.memberRepository.findOneBy({ memberId: id })
+        const member: Member | null = await this.memberRepository.findOneBy({ userBotId: id })
         if (!member) return null
         member.lastUsed = new Date();
         await this.memberRepository.save(member);
@@ -49,7 +49,7 @@ export class MemberService {
          
             const member: Member = new Member();
             member.full_name = memberDto.full_name;
-            member.memberId = memberDto.memberId;
+            member.userBotId = memberDto.memberId;
             member.lastUsed = new Date();
             return await this.memberRepository.save(member);
         } catch (error: any) {

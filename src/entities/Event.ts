@@ -22,7 +22,7 @@ export class Event {
   @OneToMany(() => Media, media => media.event,{eager:true})
   media: Media[];
 
-  @ManyToOne(() => Member, (member) => member.events)
+  @ManyToOne(() => Member, (member) => member.events,{eager:true})
   @Transform(({ value }) => value.role_name)
   member: Member;
 
