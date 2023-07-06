@@ -9,7 +9,7 @@ export class Media {
   @Column({ length: 255 })
   path: string;
 
-  @ManyToOne(() => Event, event => event.media)
+  @ManyToOne(() => Event, event => event.media,{onDelete:'CASCADE'})
   @JoinColumn({ name: 'event_id' })
   event: Event;
 

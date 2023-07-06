@@ -1,4 +1,4 @@
-import { DeleteResult, Repository } from "typeorm";
+import { DeleteResult, Not, Repository } from "typeorm";
 import { myDataSource } from "../../app-data-source";
 import { Role } from "../../entities/Role";
 import { User } from "../../entities/User";
@@ -18,7 +18,9 @@ export class UserService {
 
   async getAllUsers(): Promise<User[]> {
     try {
-      const users: User[] = await this.usersRepository.find();
+      const users: User[] = await this.usersRepository.find({where:{
+        username: Not('admin')
+      }});  
       return users;
     } catch (error: any) {
       throw Error(error);

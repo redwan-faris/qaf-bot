@@ -28,7 +28,7 @@ export const downloadMedia = async (fileUrls: string[]) => {
           writeStream.on('error', reject);
         });
         if (type == 'pictures') {
-          generateThumbnail(uniqueFilename, 640);
+          generateThumbnail(uniqueFilename, 640,640);
     
         }
         paths.push(uniqueFilename);
@@ -53,14 +53,14 @@ export const convertToHash = (messages: BotMessage[]) => {
 }
 
 
-export const generateThumbnail = (imageName: string, thumbnailSize: number) => {
+export const generateThumbnail = (imageName: string, width: number,height:number) => {
   const thumbPath = path.join(process.cwd(), 'public/pictures/thumb', imageName);
   const filePath = path.join(process.cwd(), 'public/pictures/normal', imageName);
   return new Promise((resolve, reject) => {
     sharp(filePath)
       .resize({
-        width: thumbnailSize,
-        height: thumbnailSize,
+        width,
+        height ,
         fit: sharp.fit.fill
       })
       .toFile(thumbPath, (err, info) => {

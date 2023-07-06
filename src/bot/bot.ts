@@ -26,7 +26,12 @@ export class Bot {
       process.exit(1);
     }
  
-    this.bot = new Telegraf(token);
+    this.bot = new Telegraf(token).catch(e=>console.log(e));
+    this.bot.catch((error: any, ctx: Context) => {
+      console.error('Bot error occurred:', error);
+      // Handle the error here or send an appropriate response to the user
+    });
+    
     this.step = "";
     this.event = {
       type: TypeEnum.BLOGGER,
@@ -54,7 +59,10 @@ export class Bot {
   }
 
   private setupCommands(): void {
+   
+    
     this.bot.command("start", (ctx: Context) => {
+      console.log(this.data);
       if (ctx.message && ctx.message.from) {
         const userId = ctx.message.from.id;
         this.event.member.memberId = userId
@@ -294,5 +302,6 @@ export class Bot {
       console.error('Error:', error);
       // Handle the error here or send an appropriate response to the user
     });
+  
   }
 }

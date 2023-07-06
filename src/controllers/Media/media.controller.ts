@@ -48,8 +48,8 @@ export class MediaController {
     const type = req.query.type;
     const version = req.query.version;
     const publicDir = path.join(process.cwd(),  `public/${type}/${version}`,filePath);
-    console.log(publicDir)
-    res.download(publicDir, (err) => {
+    res.set("Content-Disposition", "inline");
+    res.sendFile(publicDir, (err) => {
       if (err) { 
         console.error('File download error:', err);
         res.status(404).json({

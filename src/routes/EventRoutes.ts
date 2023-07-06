@@ -13,8 +13,11 @@ router.get("/", [checkJwt, checkRole(["superadmin","admin"])] , eventController.
  
 router.get("/:id", [checkJwt, checkRole(["superadmin","admin"])] , eventController.getEventById);
 
+router.delete("/:id", [checkJwt, checkRole(["superadmin","admin"])] , eventController.deleteBotMessage);
 
  
+ 
 
+ 
  
 export default router;

@@ -47,7 +47,7 @@ export class BotMessageController {
     const dto: BotMessageDto = plainToInstance(BotMessageDto, req.body);
     const errors: ValidationError[] = await validate(dto);
 
-
+    console.log(dto)
     if (errors.length > 0) {
       const validationErrors: any[] = [];
       errors.forEach((error: ValidationError) => {

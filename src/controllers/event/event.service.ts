@@ -1,10 +1,12 @@
-import { Repository } from "typeorm";
+import { DeleteResult, Repository } from "typeorm";
 import { myDataSource } from "../../app-data-source";
 import { Event } from "../../entities/Event";
 import { EventInterface } from "../../types/event.type";
 import { MemberService } from '../member/member.service';
 import { Member } from "../../entities/Member";
-
+import { Media } from "../../entities/Media";
+import path from "path";
+import * as fs from 'fs';
 
 
 export class EventService {
@@ -61,5 +63,25 @@ export class EventService {
             throw Error(error)
         }
     }
+    async deleteEvent(id:number):Promise<void> {
+      const event :Event = await this.getEventById(id);
+      let paths:string[]=[];
+      paths.push(path.join(process.cwd(),  `public/pictures/thumb/`));
+      paths.push(path.join(process.cwd(),  `public/pictures/normal/`));
+      paths.push(path.join(process.cwd(),  `public/videos/normal/`));
+      event.media.forEach(media => {
+         console.log(media)
+        for(let i =0;i<paths.length;i++){
+            console.log(paths[i]+media.path)
+            if (fs.existsSync(paths[i]+media.path)) {
+                
+                fs.unlinkSync(paths[i]+media.path);
+              
+              }  
+        }
+      });
+      await this.eventRepository.remove(event)
+    } 
+
 
 }
