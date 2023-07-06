@@ -67,11 +67,17 @@ export class UserController {
         status: 201,
         data: user,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
-      res.status(500).json({
-        errMessage: "Internal Server Error",
-      });
+      if (error.message == 'Username already exist') {
+        res.status(400).json({
+          errMessage: error.message,
+        });
+      }else{
+        res.status(500).json({
+          errMessage: "Internal server error",
+        });
+      }
     }
   }
 

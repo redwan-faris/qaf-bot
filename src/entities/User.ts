@@ -13,6 +13,7 @@ import {
 import { Role } from './Role';
   
   @Entity('users') 
+  @Unique(['username'])
   export class User {
     @PrimaryGeneratedColumn()
     id: number;

@@ -50,7 +50,7 @@ export class UserService {
       user.hashPassword();
       return await this.usersRepository.save(user);
     } catch (error: any) {
-      throw Error(error);
+      throw Error('Username already exist');
     }
   }
 
