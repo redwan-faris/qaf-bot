@@ -8,6 +8,6 @@ export class BotMessage {
   @Column({name:'message_key'})
   messageKey: string;
 
-  @Column({name:'message_content'})
+  @Column({name:'message_content',length:500})
   messageContent: string;
 }

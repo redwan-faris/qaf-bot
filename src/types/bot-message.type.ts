@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, Max } from "class-validator";
 
 
 export class BotMessageDto{
@@ -7,5 +7,6 @@ export class BotMessageDto{
     message_key: string;
   
     @IsNotEmpty()
+    @Max(500)
     message_content: string;
 }

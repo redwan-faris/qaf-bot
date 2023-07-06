@@ -93,7 +93,7 @@ const findType = (fileExt: string) => {
 
 
 
-  const imageExtensions = [  ".jpg",  ".jpeg",  ".png",  ".gif",  ".bmp",  ".heic",  ".heif",  ".arw",  ".cr2",  ".cr3",  ".dng",  ".nef",  ".nrw",  ".orf",  ".pef",  ".raf",  ".rw2",  ".sr2",  ".srf",  ".x3f",  ".mrw"]
+  const imageExtensions = [  ".jpg",  ".jpeg",  ".png",  ".bmp",  ".heic",  ".heif",  ".arw",  ".cr2",  ".cr3",  ".dng",  ".nef",  ".nrw",  ".orf",  ".pef",  ".raf",  ".rw2",  ".sr2",  ".srf",  ".x3f",  ".mrw"]
 
 
   if (videoExtensions.includes(fileExt)) {

@@ -282,11 +282,17 @@ export class Bot {
       }
       return next();
     });
+   
+    
   }
 
   public async start(): Promise<void> {
 
     await this.bot.launch();
     console.log("Bot is running...");
+    this.bot.catch((error) => {
+      console.error('Error:', error);
+      // Handle the error here or send an appropriate response to the user
+    });
   }
 }

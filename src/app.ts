@@ -24,7 +24,10 @@ myDataSource
   });
 
 app.use('/', routes);
-app
+app.use((err:any, req:any, res:any, next:any) => {
+  console.error(err);
+  res.status(500).send('Internal Server Error');
+});
 const port = process.env.PORT;
 app.listen(port || 3000, () => {
   console.log(`Express server started on port ${port}`);

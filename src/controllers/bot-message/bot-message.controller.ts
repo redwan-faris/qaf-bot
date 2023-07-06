@@ -61,13 +61,21 @@ export class BotMessageController {
 
       return res.status(400).json({ status: 400, success: false, errors: validationErrors });
     }
+    try {
 
-    const message: BotMessage = await botMessagesService.addBotMessages(dto);
-    res.status(201).json({
-      success: true,
-      status: 201,
-      data: message,
-    });
+      const message: BotMessage = await botMessagesService.addBotMessages(dto);
+      res.status(201).json({
+        success: true,
+        status: 201,
+        data: message,
+      });
+    }  catch(error: any) {
+      res.status(400).json({
+        status: 400,
+        error: error.message,
+        success: false
+      });
+    }
   }
 
 
@@ -111,7 +119,7 @@ export class BotMessageController {
       const botMessagesId: number = +req.params.id;
       await botMessagesService.deleteBotMessage(botMessagesId);
       res.status(200).json();
-    } catch (error:any) {
+    } catch (error: any) {
       res.status(404).json({
         status: 404,
         error: error.message,

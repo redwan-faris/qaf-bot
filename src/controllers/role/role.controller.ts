@@ -61,12 +61,18 @@ export class RoleController {
       return res.status(400).json({ status: 400, success: false, errors: validationErrors });
     }
 
-    const role: Role = await roleService.createRole(dto);
+    try{const role: Role = await roleService.createRole(dto);
     res.status(201).json({
       success: true,
       status: 201,
       data: role,
-    });
+    });}catch (error: any) {
+      res.status(400).json({
+        status: 400,
+        error: error.message,
+        success: false
+      });
+    }
   }
 
   async updateRole(req: express.Request, res: express.Response) {

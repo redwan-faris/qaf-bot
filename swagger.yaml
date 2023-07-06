@@ -101,6 +101,39 @@ paths:
                 items:
                   $ref: '#/components/schemas/Media'
   
+  /media/download/{path}:
+    get:
+      tags:
+        - Media
+      summary: Download path
+      parameters:
+        - name: path
+          in: path
+          description: Media path
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: thumb or normal
+          required: true
+          schema:
+            type: string
+            example: thumb
+        - name: type
+          in: query
+          description: video or picture
+          required: true
+          schema:
+            type: string
+            example: picture
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: OK
+           
+  
   /members:
     get:
       tags:
