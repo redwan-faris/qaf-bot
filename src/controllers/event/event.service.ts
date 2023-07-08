@@ -44,11 +44,11 @@ export class EventService {
         }
     }
 
-    async addEvent(event: EventInterface): Promise<Event> {
+    async addEvent(event: EventInterface,memberId:number): Promise<Event> {
         try {
 
 
-            let member: Member | null = await this.memberService.getMemberByTelegramId(event.member.memberId);
+            let member: Member | null = await this.memberService.updateMember(memberId,event.member);
             if (!member) {
                 member = await this.memberService.addMember(event.member)
             }

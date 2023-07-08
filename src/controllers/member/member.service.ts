@@ -31,6 +31,21 @@ export class MemberService {
         }
     }
 
+   async getMemberOrCreate(id:number){
+    try {
+
+        let member: Member|null = await this.memberRepository.findOneBy({userBotId:id});
+        if(!member){
+            member =  new Member();
+            member.userBotId = id;
+            return await this.memberRepository.save(member);
+
+        }
+        return member
+    } catch (error: any) {
+        throw Error(error)
+    }
+   }
 
     async getMemberById(id: number): Promise<Member> {
         try {
@@ -48,6 +63,20 @@ export class MemberService {
         try {
          
             const member: Member = new Member();
+            member.full_name = memberDto.full_name;
+            member.userBotId = memberDto.memberId;
+            member.lastUsed = new Date();
+            return await this.memberRepository.save(member);
+        } catch (error: any) {
+            throw Error(error)
+        }
+    }
+
+    async updateMember(id:number,memberDto:MemberDto){
+   
+        try {
+         
+            const member = await this.getMemberById(id);
             member.full_name = memberDto.full_name;
             member.userBotId = memberDto.memberId;
             member.lastUsed = new Date();

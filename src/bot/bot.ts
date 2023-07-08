@@ -3,7 +3,7 @@ import { message } from "telegraf/filters";
 import dotenv from "dotenv";
 import { EventInterface } from "../types/event.type";
 import { downloadMedia, convertToHash } from "./helpers";
-import { saveEvent, saveMedia, getBotMessages, checkIfUserExist } from './api';
+import { saveEvent, saveMedia, getBotMessages, checkIfUserExist, getOrCreateMember } from './api';
 import { Event } from "../entities/Event";
 import { TypeEnum } from "../enums/TypeEnum";
 import { MemberDto } from "../types/member.type";
@@ -28,11 +28,10 @@ export class Bot {
 
     this.bot = new Telegraf(token).catch(e => console.log(e));
     this.bot.catch((error: any, ctx: Context) => {
-      console.error('Bot error occurred:', error);
-      // Handle the error here or send an appropriate response to the user
+      console.error('Bot error occurred:', error); 
     });
 
-    this.step = "";
+ 
     this.event = {
       type: TypeEnum.BLOGGER,
       description: "",
@@ -61,11 +60,12 @@ export class Bot {
   private setupCommands(): void {
 
 
-    this.bot.command("start", (ctx: Context) => {
+    this.bot.command("start",async  (ctx: Context) => {
 
       if (ctx.message && ctx.message.from) {
         const userId = ctx.message.from.id;
         this.event.member.memberId = userId
+        
       }
       ctx.reply(this.data['CREETING'], Markup.keyboard([
         ['/send'],
@@ -77,7 +77,7 @@ export class Bot {
       if (ctx.message && ctx.message.from) {
         const userId = ctx.message.from.id;
         this.event.member.memberId = userId
-        this.member = await checkIfUserExist(this.event.member.memberId);
+        this.member! = await getOrCreateMember(userId);
       }
 
       ctx.telegram.sendMessage(ctx.chat.id, this.data['SENDER_TYPE_QUESTION'], {
@@ -104,21 +104,22 @@ export class Bot {
     this.bot.action("reporter", (ctx) => {
       ctx.deleteMessage();
 
-      if (this.member) {
-        this.event.member.full_name = this.member.full_name;
+      if (this.member!?.full_name) {
+        this.event.member.full_name = this.member!.full_name;
+       
         ctx.replyWithHTML(this.data['LOCATION_NAME_QUESTION'], {
           reply_markup: {
             force_reply: true,
           },
         });
-        this.step = "event";
+        this.member!.step = "event";
       } else {
         ctx.replyWithHTML(this.data['REPORTER_NAME_QUESTION'], {
           reply_markup: {
             force_reply: true,
           },
         });
-        this.step = "location";
+        this.member!!.step = "location";
       }
       this.event.type = TypeEnum.REPORTER;
 
@@ -126,21 +127,21 @@ export class Bot {
 
     this.bot.action("blogger", (ctx) => {
       ctx.deleteMessage();
-      if (this.member) {
-        this.event.member.full_name = this.member.full_name;
+      if (this.member!?.full_name) {
+        this.event.member.full_name = this.member!.full_name;
         ctx.replyWithHTML(this.data['LOCATION_NAME_QUESTION'], {
           reply_markup: {
             force_reply: true,
           },
         });
-        this.step = "event";
+        this.member!.step = "event";
       } else {
         ctx.replyWithHTML(this.data['REPORTER_NAME_QUESTION'], {
           reply_markup: {
             force_reply: true,
           },
         });
-        this.step = "location";
+        this.member!.step = "location";
       }
       this.event.type = TypeEnum.BLOGGER;
 
@@ -153,7 +154,7 @@ export class Bot {
           force_reply: true,
         },
       });
-      this.step = "event";
+      this.member!.step = "event";
     });
 
     this.bot.action("mediaAccept", (ctx) => {
@@ -163,24 +164,26 @@ export class Bot {
           force_reply: true,
         },
       });
-      this.step = "media";
+      this.member!.step = "media";
     });
 
     this.bot.action("mediaDecline", async (ctx) => {
 
       ctx.deleteMessage();
       ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX']);
-      this.step = "finish";
-      console.log(this.event)
+      if(this.member!){
+      this.member!.step = ""; 
+    
       let paths = await downloadMedia(this.event.media);
-      const newEvent: Event = await saveEvent(this.event);
+      const newEvent: Event = await saveEvent(this.event,this.member!.id);
       await saveMedia(paths, newEvent);
+      }
     });
   }
 
   private setupMessageHandlers(): void {
     this.bot.on(message("text"), (ctx) => {
-      if (this.step === "location") {
+      if (this.member!.step === "location") {
         const reporterName = ctx.message.text;
         if (reporterName) {
           this.event.member.full_name = reporterName;
@@ -190,8 +193,8 @@ export class Bot {
             force_reply: true,
           },
         });
-        this.step = "event";
-      } else if (this.step === "event") {
+        this.member!.step = "event";
+      } else if (this.member!.step === "event") {
         const location = ctx.message.text;
         this.event.address = location;
         ctx.replyWithHTML(this.data['EVENT_NAME_QUESTION'], {
@@ -199,8 +202,8 @@ export class Bot {
             force_reply: true,
           },
         });
-        this.step = "media";
-      } else if (this.step == "media") {
+        this.member!.step = "media";
+      } else if (this.member!.step == "media") {
         const description = ctx.message.text;
         this.event.description = description;
         ctx.telegram.sendMessage(ctx.chat.id, this.data['MEDIA_QUESTION'], {
@@ -223,7 +226,7 @@ export class Bot {
     });
 
     this.bot.on(message("photo"), async (ctx) => {
-      if (this.step === "media") {
+      if (this.member!.step === "media") {
         const photo = ctx.message.photo[ctx.message.photo.length - 1];
 
         const fileId = photo.file_id;
@@ -250,7 +253,7 @@ export class Bot {
     });
 
     this.bot.on(message("video"), async (ctx) => {
-      if (this.step === "media") {
+      if (this.member!.step === "media") {
         const video = ctx.message.video;
 
         const fileId = video.file_id;
