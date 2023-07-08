@@ -25,13 +25,13 @@ export class Bot {
       console.error("BOT_TOKEN is not defined in the environment variables");
       process.exit(1);
     }
- 
-    this.bot = new Telegraf(token).catch(e=>console.log(e));
+
+    this.bot = new Telegraf(token).catch(e => console.log(e));
     this.bot.catch((error: any, ctx: Context) => {
       console.error('Bot error occurred:', error);
       // Handle the error here or send an appropriate response to the user
     });
-    
+
     this.step = "";
     this.event = {
       type: TypeEnum.BLOGGER,
@@ -59,27 +59,27 @@ export class Bot {
   }
 
   private setupCommands(): void {
-   
-    
+
+
     this.bot.command("start", (ctx: Context) => {
- 
+
       if (ctx.message && ctx.message.from) {
         const userId = ctx.message.from.id;
         this.event.member.memberId = userId
       }
       ctx.reply(this.data['CREETING'], Markup.keyboard([
         ['/send'],
-      
-      ]).resize()); 
+
+      ]).resize());
     });
-   
+
     this.bot.command("send", async (ctx) => {
       if (ctx.message && ctx.message.from) {
         const userId = ctx.message.from.id;
         this.event.member.memberId = userId
         this.member = await checkIfUserExist(this.event.member.memberId);
       }
-      
+
       ctx.telegram.sendMessage(ctx.chat.id, this.data['SENDER_TYPE_QUESTION'], {
         reply_markup: {
           inline_keyboard: [
@@ -235,11 +235,11 @@ export class Bot {
             inline_keyboard: [
               [
                 {
-                  text: "نعم",
+                  text: this.data['MEDIA_ACCEPT'],
                   callback_data: "mediaAccept",
                 },
                 {
-                  text: "لا",
+                  text: this.data['MEDIA_DECLINE'],
                   callback_data: "mediaDecline",
                 },
               ],
@@ -263,11 +263,11 @@ export class Bot {
             inline_keyboard: [
               [
                 {
-                  text: "نعم",
+                  text: "this.data['MEDIA_ACCEPT']",
                   callback_data: "mediaAccept",
                 },
                 {
-                  text: "لا",
+                  text: this.data['MEDIA_DECLINE'],
                   callback_data: "mediaDecline",
                 },
               ],
@@ -293,19 +293,19 @@ export class Bot {
       }
       return next();
     });
-   
-    
+
+
   }
 
   public async start(): Promise<void> {
 
     await this.bot.launch();
     console.log("Bot is running...");
-   
+
     this.bot.catch((error) => {
       console.error('Error:', error);
       // Handle the error here or send an appropriate response to the user
     });
-  
+
   }
 }
