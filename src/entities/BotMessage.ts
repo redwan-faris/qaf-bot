@@ -5,7 +5,7 @@ export class BotMessage {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({name:"Sequence",default:1})
+  @Column({name:"sequence",default:1})
   sequence:number;
 
   @Column({name:'message_key'})
