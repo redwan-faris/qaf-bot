@@ -14,7 +14,9 @@ export class BotMessageService {
     async getAllBotMessages():Promise<BotMessage[]>{
         try{
         
-            const BotMessagess:BotMessage[] = await this.botMessagesRepository.find();
+            const BotMessagess:BotMessage[] = await this.botMessagesRepository.find({
+                order: { sequence: 'ASC' }, 
+              });
         return BotMessagess;
         }catch(error:any){
             throw Error(error)   
