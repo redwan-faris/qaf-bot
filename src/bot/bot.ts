@@ -1,4 +1,4 @@
-import { Telegraf, Context } from "telegraf";
+import { Telegraf, Context, Markup } from "telegraf";
 import { message } from "telegraf/filters";
 import dotenv from "dotenv";
 import { EventInterface } from "../types/event.type";
@@ -62,21 +62,24 @@ export class Bot {
    
     
     this.bot.command("start", (ctx: Context) => {
-      console.log(this.data);
+ 
       if (ctx.message && ctx.message.from) {
         const userId = ctx.message.from.id;
         this.event.member.memberId = userId
       }
-      ctx.reply(this.data['CREETING']);
+      ctx.reply(this.data['CREETING'], Markup.keyboard([
+        ['/send'],
+      
+      ]).resize()); 
     });
-
+   
     this.bot.command("send", async (ctx) => {
       if (ctx.message && ctx.message.from) {
         const userId = ctx.message.from.id;
         this.event.member.memberId = userId
         this.member = await checkIfUserExist(this.event.member.memberId);
       }
-
+      
       ctx.telegram.sendMessage(ctx.chat.id, this.data['SENDER_TYPE_QUESTION'], {
         reply_markup: {
           inline_keyboard: [
@@ -298,6 +301,7 @@ export class Bot {
 
     await this.bot.launch();
     console.log("Bot is running...");
+   
     this.bot.catch((error) => {
       console.error('Error:', error);
       // Handle the error here or send an appropriate response to the user
