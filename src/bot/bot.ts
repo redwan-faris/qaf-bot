@@ -105,7 +105,7 @@ export class Bot {
   private setupActions(): void {
 
     this.bot.action("reporter", (ctx) => {
-          ctx.deleteMessage().catch();
+          ctx.deleteMessage().catch(e => console.log(e));
      
       if (this.member!?.full_name) {
         this.event.member.full_name = this.member!.full_name;
@@ -132,7 +132,7 @@ export class Bot {
     });;
 
     this.bot.action("blogger", (ctx) => {
-          ctx.deleteMessage().catch();;
+          ctx.deleteMessage().catch(e => console.log(e));;
       if (this.member!?.full_name) {
         this.event.member.full_name = this.member!.full_name;
         ctx.replyWithHTML(this.data['LOCATION_NAME_QUESTION']?this.data['LOCATION_NAME_QUESTION']:'الرساله غير متوفرة الان لكن تم تسجيل معلوماتك', {
@@ -158,7 +158,7 @@ export class Bot {
     });;
 
     this.bot.action("location", (ctx) => {
-          ctx.deleteMessage().catch();;
+          ctx.deleteMessage().catch(e => console.log(e));;
       ctx.replyWithHTML(this.data['LOCATION_NAME_QUESTION']?this.data['LOCATION_NAME_QUESTION']:'الرساله غير متوفرة الان لكن تم تسجيل معلوماتك', {
         reply_markup: {
           force_reply: true,
@@ -171,7 +171,7 @@ export class Bot {
     });;
 
     this.bot.action("mediaAccept", (ctx) => {
-          ctx.deleteMessage().catch();;
+          ctx.deleteMessage().catch(e => console.log(e));;
       ctx.replyWithHTML(this.data['MEDIA_QUESTION']?this.data['MEDIA_QUESTION']:'الرساله غير متوفرة الان لكن تم تسجيل معلوماتك', {
         reply_markup: {
           force_reply: true,
@@ -184,7 +184,7 @@ export class Bot {
 
     this.bot.action("mediaDecline", async (ctx) => {
 
-          ctx.deleteMessage().catch();;
+          ctx.deleteMessage().catch(e => console.log(e));;
       ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX']?this.data['GRATITUDE_MESSAGEX']:'الرساله غير متوفرة الان لكن تم تسجيل معلوماتك');
       if(this.member!){
       this.member!.step = ""; 
@@ -319,7 +319,7 @@ export class Bot {
        
       return next(); 
     });
-
+ 
 
   }
 
