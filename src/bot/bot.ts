@@ -71,7 +71,9 @@ export class Bot {
         ['/send'],
 
       ]).resize());
-    });
+    }).catch((error: any, ctx: Context) => {
+      console.error('Bot error occurred:', error); 
+    });;
 
     this.bot.command("send", async (ctx) => {
       if (ctx.message && ctx.message.from) {
@@ -96,7 +98,9 @@ export class Bot {
           ],
         },
       });
-    });
+    }).catch((error: any, ctx: Context) => {
+      console.error('Bot error occurred:', error); 
+    });;
   }
 
   private setupActions(): void {
@@ -123,7 +127,9 @@ export class Bot {
       }
       this.event.type = TypeEnum.REPORTER;
 
-    });
+    }).catch((error: any, ctx: Context) => {
+      console.error('Bot error occurred:', error); 
+    });;
 
     this.bot.action("blogger", (ctx) => {
       ctx.deleteMessage();
@@ -145,7 +151,9 @@ export class Bot {
       }
       this.event.type = TypeEnum.BLOGGER;
 
-    });
+    }).catch((error: any, ctx: Context) => {
+      console.error('Bot error occurred:', error); 
+    });;
 
     this.bot.action("location", (ctx) => {
       ctx.deleteMessage();
@@ -155,7 +163,9 @@ export class Bot {
         },
       });
       this.member!.step = "event";
-    });
+    }).catch((error: any, ctx: Context) => {
+      console.error('Bot error occurred:', error); 
+    });;
 
     this.bot.action("mediaAccept", (ctx) => {
       ctx.deleteMessage();
@@ -165,7 +175,9 @@ export class Bot {
         },
       });
       this.member!.step = "media";
-    });
+    }).catch((error: any, ctx: Context) => {
+      console.error('Bot error occurred:', error); 
+    });;
 
     this.bot.action("mediaDecline", async (ctx) => {
 
@@ -178,7 +190,9 @@ export class Bot {
       const newEvent: Event = await saveEvent(this.event,this.member!.id);
       await saveMedia(paths, newEvent);
       }
-    });
+    }).catch((error: any, ctx: Context) => {
+      console.error('Bot error occurred:', error); 
+    });;
   }
 
   private setupMessageHandlers(): void {
@@ -223,7 +237,9 @@ export class Bot {
           },
         });
       }
-    });
+    }).catch((error: any, ctx: Context) => {
+      console.error('Bot error occurred:', error); 
+    });;
 
     this.bot.on(message("photo"), async (ctx) => {
       if (this.member!.step === "media") {
@@ -250,7 +266,9 @@ export class Bot {
           },
         });
       }
-    });
+    }).catch((error: any, ctx: Context) => {
+      console.error('Bot error occurred:', error); 
+    });;
 
     this.bot.on(message("video"), async (ctx) => {
       if (this.member!.step === "media") {
@@ -278,7 +296,9 @@ export class Bot {
           },
         });
       }
-    });
+    }).catch((error: any, ctx: Context) => {
+      console.error('Bot error occurred:', error); 
+    });;
   }
 
   private setupMiddleware(): void {

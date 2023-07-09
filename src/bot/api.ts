@@ -7,6 +7,7 @@ import { EventInterface } from "../types/event.type";
 import { MediaInterface } from "../types/media.type"
 import { MemberService } from '../controllers/member/member.service';
 import { Member } from '../entities/Member';
+import { MemberDto } from "../types/member.type";
 
 
 
@@ -39,4 +40,9 @@ export const getOrCreateMember = async (id: number) => {
     const memberService: MemberService = new MemberService();
     const member: Member | null = await memberService.getMemberOrCreate(id);
     return member;
+}
+
+export const updateMember = async (id:number,memberDto:MemberDto) => {
+    const memberService: MemberService = new MemberService();
+    await memberService.updateMember(id,memberDto)
 }

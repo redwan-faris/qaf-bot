@@ -87,6 +87,18 @@ export class MemberService {
     }
  
 
+    async updateStep(id:number,step:string){
+   
+        try {
+         
+            const member = await this.getMemberById(id);
+            member.step = step;
+            member.lastUsed = new Date();
+            return await this.memberRepository.save(member);
+        } catch (error: any) {
+            throw Error(error)
+        }
+    }
     
 
 }

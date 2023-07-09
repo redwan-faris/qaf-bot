@@ -18,7 +18,7 @@ export class Member {
     @OneToMany(() => Event, (event) => event.member)
     events: Event[];
 
-    @Column({type:'varchar',default:'zero'})
+    @Column({type:'varchar',default:'zero',nullable:true})
     step:string;
 
     @CreateDateColumn({ name: 'created_at' })
