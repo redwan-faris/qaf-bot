@@ -3,12 +3,10 @@ import { message } from "telegraf/filters";
 import dotenv from "dotenv";
 import { EventInterface } from "../types/event.type";
 import { downloadMedia, convertToHash } from "./helpers";
-import { saveEvent, saveMedia, getBotMessages, checkIfUserExist, getOrCreateMember } from './api';
+import { saveEvent, saveMedia, getBotMessages, checkIfUserExist, getOrCreateMember, updateMember } from './api';
 import { Event } from "../entities/Event";
 import { TypeEnum } from "../enums/TypeEnum";
-import { MemberDto } from "../types/member.type";
 import { Member } from '../entities/Member';
-
 
 // TODO refactor the bot code 
 dotenv.config();
@@ -43,10 +41,11 @@ export class Bot {
       media: [] as string[],
     };
     this.updateData();
+    this.setupMiddleware();
     this.setupCommands();
     this.setupActions();
     this.setupMessageHandlers();
-    this.setupMiddleware();
+
   }
 
   public updateData() {
@@ -65,7 +64,7 @@ export class Bot {
       if (ctx.message && ctx.message.from) {
         const userId = ctx.message.from.id;
         this.event.member.memberId = userId
-        
+        this.member! = await getOrCreateMember(userId);
       }
       ctx.reply(this.data['CREETING']?this.data['CREETING']:'الرساله غير متوفرة الان لكن تم تسجيل معلوماتك', Markup.keyboard([
         ['/send'],
@@ -106,8 +105,8 @@ export class Bot {
   private setupActions(): void {
 
     this.bot.action("reporter", (ctx) => {
-      ctx.deleteMessage();
-
+          ctx.deleteMessage().catch();
+     
       if (this.member!?.full_name) {
         this.event.member.full_name = this.member!.full_name;
        
@@ -117,6 +116,7 @@ export class Bot {
           },
         });
         this.member!.step = "event";
+        updateMember(this.member.id,"event")
       } else {
         ctx.replyWithHTML(this.data['REPORTER_NAME_QUESTION']?this.data['REPORTER_NAME_QUESTION']:'الرساله غير متوفرة الان لكن تم تسجيل معلوماتك', {
           reply_markup: {
@@ -132,7 +132,7 @@ export class Bot {
     });;
 
     this.bot.action("blogger", (ctx) => {
-      ctx.deleteMessage();
+          ctx.deleteMessage().catch();;
       if (this.member!?.full_name) {
         this.event.member.full_name = this.member!.full_name;
         ctx.replyWithHTML(this.data['LOCATION_NAME_QUESTION']?this.data['LOCATION_NAME_QUESTION']:'الرساله غير متوفرة الان لكن تم تسجيل معلوماتك', {
@@ -141,6 +141,7 @@ export class Bot {
           },
         });
         this.member!.step = "event";
+        updateMember(this.member.id,"event")
       } else {
         ctx.replyWithHTML(this.data['REPORTER_NAME_QUESTION']?this.data['REPORTER_NAME_QUESTION']:'الرساله غير متوفرة الان لكن تم تسجيل معلوماتك', {
           reply_markup: {
@@ -148,6 +149,7 @@ export class Bot {
           },
         });
         this.member!.step = "location";
+        updateMember(this.member!.id,"location")
       }
       this.event.type = TypeEnum.BLOGGER;
 
@@ -156,19 +158,20 @@ export class Bot {
     });;
 
     this.bot.action("location", (ctx) => {
-      ctx.deleteMessage();
+          ctx.deleteMessage().catch();;
       ctx.replyWithHTML(this.data['LOCATION_NAME_QUESTION']?this.data['LOCATION_NAME_QUESTION']:'الرساله غير متوفرة الان لكن تم تسجيل معلوماتك', {
         reply_markup: {
           force_reply: true,
         },
       });
       this.member!.step = "event";
+      updateMember(this.member!.id,"event")
     }).catch((error: any, ctx: Context) => {
       console.error('Bot error occurred:', error); 
     });;
 
     this.bot.action("mediaAccept", (ctx) => {
-      ctx.deleteMessage();
+          ctx.deleteMessage().catch();;
       ctx.replyWithHTML(this.data['MEDIA_QUESTION']?this.data['MEDIA_QUESTION']:'الرساله غير متوفرة الان لكن تم تسجيل معلوماتك', {
         reply_markup: {
           force_reply: true,
@@ -181,11 +184,11 @@ export class Bot {
 
     this.bot.action("mediaDecline", async (ctx) => {
 
-      ctx.deleteMessage();
+          ctx.deleteMessage().catch();;
       ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX']?this.data['GRATITUDE_MESSAGEX']:'الرساله غير متوفرة الان لكن تم تسجيل معلوماتك');
       if(this.member!){
       this.member!.step = ""; 
-    
+      updateMember(this.member!.id,"")
       let paths = await downloadMedia(this.event.media);
       const newEvent: Event = await saveEvent(this.event,this.member!.id);
       await saveMedia(paths, newEvent);
@@ -208,6 +211,7 @@ export class Bot {
           },
         });
         this.member!.step = "event";
+        updateMember(this.member!.id,"event")
       } else if (this.member!.step === "event") {
         const location = ctx.message.text;
         this.event.address = location;
@@ -217,6 +221,7 @@ export class Bot {
           },
         });
         this.member!.step = "media";
+        updateMember(this.member!.id,"media")
       } else if (this.member!.step == "media") {
         const description = ctx.message.text;
         this.event.description = description;
@@ -302,19 +307,17 @@ export class Bot {
   }
 
   private setupMiddleware(): void {
-
-    this.bot.use((ctx, next) => {
-
+  
+  
+    this.bot.use(async(ctx, next) => {
+   
       if (ctx.message && ctx.message.from) {
         const userId = ctx.message.from.id;
         this.event.member.memberId = userId
-        console.log('-----')
-        console.log(userId)
+        this.member! = await getOrCreateMember(userId);
       }
-      else {
-        console.log('----------fuck----------')
-      }
-      return next();
+       
+      return next(); 
     });
 
 

@@ -42,7 +42,7 @@ export const getOrCreateMember = async (id: number) => {
     return member;
 }
 
-export const updateMember = async (id:number,memberDto:MemberDto) => {
+export const updateMember = async (id:number,step:string) => {
     const memberService: MemberService = new MemberService();
-    await memberService.updateMember(id,memberDto)
+    await memberService.updateStep(id,step)
 }
