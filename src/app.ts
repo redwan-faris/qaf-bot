@@ -12,8 +12,10 @@ app.use(cors());
 
 export const bot = new Bot();
 
-bot.start();
 
+setTimeout(() => {
+  bot.start();
+}, 1000);
 myDataSource
   .initialize()
   .then(() => {
