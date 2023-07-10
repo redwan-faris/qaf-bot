@@ -53,7 +53,7 @@ export class EventService {
                 member = await this.memberService.addMember(event.member)
             }
             const newEvent: Event = new Event();
-            newEvent.address = event.address;
+        
             newEvent.description = event.description;
             newEvent.member = member;
             newEvent.mebmerId = member.id;

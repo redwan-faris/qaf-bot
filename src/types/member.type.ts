@@ -8,6 +8,9 @@ export class MemberDto{
  
     @IsNotEmpty()
     memberId:number;
+
+    @IsNotEmpty()
+    address:string;
  
 }
  

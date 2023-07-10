@@ -3,7 +3,7 @@ import { message } from "telegraf/filters";
 import dotenv from "dotenv";
 import { EventInterface } from "../types/event.type";
 import { downloadMedia, convertToHash } from "./helpers";
-import { saveEvent, saveMedia, getBotMessages, checkIfUserExist, getOrCreateMember, updateMember } from './api';
+import { saveEvent, saveMedia, getBotMessages, getOrCreateMember, updateMember } from './api';
 import { Event } from "../entities/Event";
 import { TypeEnum } from "../enums/TypeEnum";
 import { Member } from '../entities/Member';
@@ -33,6 +33,7 @@ export class Bot {
       type: TypeEnum.BLOGGER,
       description: "",
       member: {
+        address:'',
         full_name: '',
         memberId: 0,
       },
