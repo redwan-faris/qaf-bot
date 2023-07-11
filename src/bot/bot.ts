@@ -58,47 +58,28 @@ export class Bot {
   private setupCommands(): void {
     this.bot.command("start", async (ctx: Context) => {
       try {
-        if (ctx.message && ctx.message.from) {
-          const userId = ctx.message.from.id;
-          this.event.member.memberId = userId;
-          this.member! = await getOrCreateMember(userId);
-        }
-        ctx.reply(this.data['CREETING'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', Markup.keyboard([
-          ['/send'],
-        ]).resize());
-      } catch (error) {
-        console.error('Error occurred while executing command "start":', error);
-      }
-    });
-
-    this.bot.command("send", async (ctx) => {
-      try {
-        if (ctx.message && ctx.message.from) {
-          const userId = ctx.message.from.id;
-          this.event.member.memberId = userId;
-          this.member! = await getOrCreateMember(userId);
-        }
-
-        ctx.telegram.sendMessage(ctx.chat.id, this.data['SENDER_TYPE_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
+        await ctx.deleteMessage();
+        ctx.sendMessage('مرحبا بك في راديو الغد')
+        ctx.reply( "الرجاء قم بارسال المواد عند الانتهاء من ارسال الصور اضغط على انهاء"|| 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
           reply_markup: {
             inline_keyboard: [
               [
+        
                 {
-                  text: this.data['REPORTER'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
-                  callback_data: "reporter",
-                },
-                {
-                  text: this.data['BLOGGER'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
-                  callback_data: "blogger",
+                  text: "انهاء"|| 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
+                  callback_data: "mediaDecline",
                 },
               ],
             ],
           },
         });
+        this.member!.step = "media";
       } catch (error) {
-        console.error('Error occurred while executing command "send":', error);
+        console.error('Error occurred while executing action "mediaAccept":', error);
       }
     });
+
+    
   }
 
   private setupActions(): void {
@@ -130,30 +111,9 @@ export class Bot {
     });
 
     this.bot.action("blogger", async (ctx) => {
-      try {
-        await ctx.deleteMessage();
-        if (this.member!?.full_name) {
-          this.event.member.full_name = this.member!.full_name;
-          ctx.replyWithHTML(this.data['LOCATION_NAME_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
-            reply_markup: {
-              force_reply: true,
-            },
-          });
-          this.member!.step = "event";
-          await updateMember(this.member!.id, "event");
-        } else {
-          ctx.replyWithHTML(this.data['REPORTER_NAME_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
-            reply_markup: {
-              force_reply: true,
-            },
-          });
-          this.member!.step = "location";
-          await updateMember(this.member!.id, "location");
-        }
-        this.event.type = TypeEnum.BLOGGER;
-      } catch (error) {
-        console.error('Error occurred while executing action "blogger":', error);
-      }
+      ctx.reply(`شكرا لتواصلك مع راديو الغد نطمح دائما لاستقبل المواد الخاصة بك من اي مكان 
+      راديو الغد معكم وطن دائم يمتد في كل مكان`)
+      this.member!.step = "";
     });
 
     this.bot.action("location", async (ctx) => {
@@ -171,39 +131,24 @@ export class Bot {
       }
     });
 
-    this.bot.action("mediaAccept", async (ctx) => {
-      try {
-        await ctx.deleteMessage();
-        ctx.replyWithHTML(this.data['MEDIA_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
-          reply_markup: {
-            force_reply: true,
-          },
-        });
-        this.member!.step = "media";
-      } catch (error) {
-        console.error('Error occurred while executing action "mediaAccept":', error);
-      }
-    });
+  
 
     this.bot.action("mediaDecline", async (ctx) => {
-      try {
-        await ctx.deleteMessage();
-        ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك');
-        if (this.member!) {
-          this.member!.step = "";
-          await updateMember(this.member!.id, "");
-          const paths = await downloadMedia(this.event.media);
-          const newEvent: Event = await saveEvent(this.event, this.member!.id);
-          await saveMedia(paths, newEvent);
-        }
-      } catch (error) {
-        console.error('Error occurred while executing action "mediaDecline":', error);
-      }
+   try{
+    await ctx.deleteMessage();
+    this.member!.step = 'description';
+    console.log(this.member?.step)
+    ctx.reply('الرجاء ادخال وصف عن الماده التي ارسلتها')
+   } catch (error) {
+    console.error('Error occurred while executing action "location":', error);
+  }
+
     });
   }
 
   private setupMessageHandlers(): void {
     this.bot.on(message("text"), async (ctx) => {
+ 
       try {
         if (this.member!.step === "location") {
           const reporterName = ctx.message.text;
@@ -227,25 +172,25 @@ export class Bot {
           });
           this.member!.step = "media";
           await updateMember(this.member!.id, "media");
-        } else if (this.member!.step == "media") {
-          const description = ctx.message.text;
-          this.event.description = description;
-          ctx.telegram.sendMessage(ctx.chat.id, this.data['MEDIA_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: this.data['MEDIA_ACCEPT'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
-                    callback_data: "mediaAccept",
-                  },
-                  {
-                    text: this.data['MEDIA_DECLINE'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
-                    callback_data: "mediaDecline",
-                  },
+        } else if (this.member!.step == "description") {
+            this.event.description = ctx.message.text;
+            
+            ctx.telegram.sendMessage(ctx.chat!.id, "هل تريد تسجيل اسمك وعنوانك"|| 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text:"نعم"|| 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
+                      callback_data: "reporter",
+                    },
+                    {
+                      text: "لا" || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
+                      callback_data: "blogger",
+                    },
+                  ],
                 ],
-              ],
-            },
-          });
+              },
+            });
         }
       } catch (error) {
         console.error('Error occurred while handling message of type "text":', error);
@@ -290,22 +235,7 @@ export class Bot {
           const file = await ctx.telegram.getFile(fileId);
           const fileUrl = `https://api.telegram.org/file/bot${token}/${file.file_path}`;
           this.event.media.push(fileUrl);
-          ctx.telegram.sendMessage(ctx.chat.id, this.data['SECOND_MEDIA_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: this.data['MEDIA_ACCEPT'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
-                    callback_data: "mediaAccept",
-                  },
-                  {
-                    text: this.data['MEDIA_DECLINE'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
-                    callback_data: "mediaDecline",
-                  },
-                ],
-              ],
-            },
-          });
+      
         }
       } catch (error) {
         console.error('Error occurred while handling message of type "video":', error);

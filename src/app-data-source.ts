@@ -10,5 +10,5 @@ export const myDataSource = new DataSource({
     database: process.env.DB_NAME,
     entities: ["src/entities/*{.js,.ts}"],
     logging: false,  
-    synchronize:false
+    synchronize:true
 })
