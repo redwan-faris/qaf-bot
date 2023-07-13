@@ -3,18 +3,23 @@ import dotenv from 'dotenv';
 import { myDataSource } from './app-data-source';
 import routes from "./routes";
 import { Bot } from './bot/bot';
-import cors from 'cors';
+// import cors from 'cors';
 
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(cors());
+// app.use(cors());
 
 export const bot = new Bot();
 
 
 setTimeout(() => {
-  bot.start();
+  bot.bot.launch({
+    webhook:{
+      domain: "https://qafbot.ticketin.net/",// Your domain URL (where server code will be deployed)
+      port: 5001
+  }
+  });
 }, 1000);
 myDataSource
   .initialize()
@@ -24,6 +29,7 @@ myDataSource
   .catch((err) => {
     console.error("Error during Data Source initialization:", err);
   });
+ 
 
 app.use('/', routes);
 app.use((err:any, req:any, res:any, next:any) => {

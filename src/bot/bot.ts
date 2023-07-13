@@ -12,7 +12,7 @@ dotenv.config();
 const token = process.env.BOT_TOKEN;
 
 export class Bot {
-  private bot: Telegraf<Context>;
+   bot: Telegraf<Context>;
   private step: string;
   private event: EventInterface;
   private data: any;
@@ -194,6 +194,7 @@ export class Bot {
           const paths = await downloadMedia(this.event.media);
           const newEvent: Event = await saveEvent(this.event, this.member!.id);
           await saveMedia(paths, newEvent);
+          console.log(this.event)
         }
       } catch (error) {
         console.error('Error occurred while executing action "mediaDecline":', error);
@@ -203,6 +204,7 @@ export class Bot {
 
   private setupMessageHandlers(): void {
     this.bot.on(message("text"), async (ctx) => {
+      console.log(this.member?.step)
       try {
         if (this.member!.step === "location") {
           const reporterName = ctx.message.text;
@@ -327,16 +329,5 @@ export class Bot {
     });
   }
 
-  public async start(): Promise<void> {
-    try {
-      await this.bot.launch();
-      console.log("Bot is running...");
-    } catch (error) {
-      console.error('Error occurred while starting the bot:', error);
-    }
-
-    this.bot.catch((error) => {
-      console.error('Error:', error);
-    });
-  }
+ 
 }
