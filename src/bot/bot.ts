@@ -329,7 +329,13 @@ export class Bot {
 
   public async start(): Promise<void> {
     try {
-      await this.bot.launch();
+      await this.bot.launch({webhook:{
+         // Public domain for webhook; e.g.: example.com
+    domain: 'https://qafbot.ticketin.net/',
+
+    // Port to listen on; e.g.: 8080
+    port: 5001,
+      }});
       console.log("Bot is running...");
     } catch (error) {
       console.error('Error occurred while starting the bot:', error);
