@@ -26,7 +26,7 @@ export const saveEvent = async (event: EventInterface,memberId:number) => {
 export const getBotMessages = async () => {
     const botMessageService: BotMessageService = new BotMessageService();
     const messages: BotMessage[] = await botMessageService.getAllBotMessages();
-
+ 
     return messages;
 }
 
