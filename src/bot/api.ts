@@ -3,12 +3,9 @@ import { EventService } from "../controllers/event/event.service";
 import { MediaService } from "../controllers/Media/media.service"
 import { BotMessage } from "../entities/BotMessage";
 import { Event } from "../entities/Event";
-import { EventInterface } from "../types/event.type";
-import { MediaInterface } from "../types/media.type"
+import { EventInterface } from "../types/event.type"; 
 import { MemberService } from '../controllers/member/member.service';
-import { Member } from '../entities/Member';
-import { MemberDto } from "../types/member.type";
-
+import { Member } from '../entities/Member'; 
 
 
 export const saveMedia = async (media: string[], event: Event) => {
