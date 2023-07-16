@@ -251,22 +251,7 @@ export class Bot {
         } else if (this.member[userId].step === "media") {
           const description = ctx.message.text;
           this.sessions[userId].description = description;
-          ctx.telegram.sendMessage(ctx.chat.id, this.data['MEDIA_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: this.data['MEDIA_ACCEPT'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
-                    callback_data: "mediaAccept",
-                  },
-                  {
-                    text: this.data['MEDIA_DECLINE'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
-                    callback_data: "mediaDecline",
-                  },
-                ],
-              ],
-            },
-          });
+          ctx.telegram.sendMessage(ctx.chat.id, this.data['MEDIA_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك');
         }
       } catch (error) {
         console.error('Error occurred while handling message of type "text":', error);
