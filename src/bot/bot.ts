@@ -204,7 +204,9 @@ export class Bot {
       const userId = ctx.from?.id;
       try {
         await ctx.deleteMessage();
-        ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك');
+        ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',Markup.keyboard([
+          ['/send'],
+        ]).resize());
         if (this.member[userId]) {
           this.member[userId].step = "";
           await updateMember(this.member[userId].id, "");
@@ -212,6 +214,7 @@ export class Bot {
           const newEvent: Event = await saveEvent(this.sessions[userId], this.member[userId].id);
           await saveMedia(paths, newEvent);
           delete this.sessions[userId];
+   
         }
       } catch (error) {
         console.error('Error occurred while executing action "mediaDecline":', error);
