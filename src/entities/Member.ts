@@ -21,6 +21,9 @@ export class Member {
     @Column({type:'varchar',default:'zero',nullable:true})
     step:string;
 
+    @Column({name:'feed_back',type:'varchar',nullable:true})
+    feedBack:string;
+
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
   

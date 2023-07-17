@@ -52,6 +52,8 @@ export class Bot {
           const userId = ctx.message.from.id;
           this.member[userId] = await getOrCreateMember(userId);
           this.sessions[userId] = {
+            feedBack:"",
+            takeFeedBack:true,
             type: TypeEnum.BLOGGER,
             description: "",
             address: "",
@@ -78,7 +80,9 @@ export class Bot {
           this.member[userId] = await getOrCreateMember(userId);
           this.sessions[userId] = {
             type: TypeEnum.BLOGGER,
+            feedBack:"",
             description: "",
+            takeFeedBack:this.sessions[userId]?this.sessions[userId].takeFeedBack:false,
             address: "",
             media: [] as string[],
             member: {
@@ -86,6 +90,7 @@ export class Bot {
               memberId: 0
             }
           };
+          console.log(this.sessions[userId])
           this.sessions[userId].member.memberId = userId;
         }
 
@@ -202,25 +207,40 @@ export class Bot {
 
     this.bot.action("mediaDecline", async (ctx: any) => {
       const userId = ctx.from?.id;
-      try {
-        await ctx.deleteMessage();
-        ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',Markup.keyboard([
-          ['/send'],
-        ]).resize());
-        if (this.member[userId]) {
-          this.member[userId].step = "";
-          await updateMember(this.member[userId].id, "");
-          const paths = await downloadMedia(this.sessions[userId].media);
-          const newEvent: Event = await saveEvent(this.sessions[userId], this.member[userId].id);
-          await saveMedia(paths, newEvent);
-          delete this.sessions[userId];
-   
+      await ctx.deleteMessage();
+      if(this.sessions[userId].takeFeedBack){
+        ctx.replyWithHTML(this.data['FEEDBACK_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
+          reply_markup: {
+            force_reply: true,
+          },
+        });
+        this.member[userId].step = 'feedback';
+        await updateMember(this.member[userId].id,'feedback')
+      }else{
+        try {
+     
+          ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',Markup.keyboard([
+            ['/send'],
+          ]).resize());
+          if (this.member[userId]) {
+            this.member[userId].step = "";
+            await updateMember(this.member[userId].id, "");
+            const paths = await downloadMedia(this.sessions[userId].media);
+            const newEvent: Event = await saveEvent(this.sessions[userId], this.member[userId].id);
+            await saveMedia(paths, newEvent);
+            delete this.sessions[userId];
+     
+          }
+        } catch (error) {
+          console.error('Error occurred while executing action "mediaDecline":', error);
         }
-      } catch (error) {
-        console.error('Error occurred while executing action "mediaDecline":', error);
+  
       }
+      
     });
   }
+
+
 
   private setupMessageHandlers(): void {
     this.bot.on(message("text"), async (ctx) => {
@@ -252,6 +272,18 @@ export class Bot {
           const description = ctx.message.text;
           this.sessions[userId].description = description;
           ctx.telegram.sendMessage(ctx.chat.id, this.data['MEDIA_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك');
+        }else if(this.member[userId].step === 'feedback'){
+          ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',Markup.keyboard([
+            ['/send'],
+          ]).resize());
+          this.member[userId].step = "";
+          await updateMember(this.member[userId].id, "");
+          const paths = await downloadMedia(this.sessions[userId].media);
+        
+          console.log(this.member[userId])
+          const newEvent: Event = await saveEvent(this.sessions[userId], this.member[userId].id);
+          await saveMedia(paths, newEvent);
+          delete this.sessions[userId];
         }
       } catch (error) {
         console.error('Error occurred while handling message of type "text":', error);
