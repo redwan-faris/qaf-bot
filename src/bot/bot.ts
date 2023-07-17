@@ -74,9 +74,10 @@ export class Bot {
     });
 
     this.bot.command("send", async (ctx) => {
+
+      const userId = ctx.message.from.id;
       try {
         if (ctx.message && ctx.message.from) {
-          const userId = ctx.message.from.id;
           this.member[userId] = await getOrCreateMember(userId);
           this.sessions[userId] = {
             type: TypeEnum.BLOGGER,
@@ -93,23 +94,9 @@ export class Bot {
           console.log(this.sessions[userId])
           this.sessions[userId].member.memberId = userId;
         }
-
-        ctx.telegram.sendMessage(ctx.chat.id, this.data['SENDER_TYPE_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: this.data['REPORTER'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
-                  callback_data: "reporter",
-                },
-                {
-                  text: this.data['BLOGGER'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
-                  callback_data: "blogger",
-                },
-              ],
-            ],
-          },
-        });
+        this.member[userId].step = 'media';
+        updateMember(this.member[userId].id,'media')
+        ctx.telegram.sendMessage(ctx.chat.id, this.data['MEDIA_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك');
       } catch (error) {
         console.error('Error occurred while executing command "send":', error);
       }
@@ -208,34 +195,26 @@ export class Bot {
     this.bot.action("mediaDecline", async (ctx: any) => {
       const userId = ctx.from?.id;
       await ctx.deleteMessage();
-      if(this.sessions[userId].takeFeedBack){
-        ctx.replyWithHTML(this.data['FEEDBACK_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
-          reply_markup: {
-            force_reply: true,
-          },
-        });
-        this.member[userId].step = 'feedback';
-        await updateMember(this.member[userId].id,'feedback')
-      }else{
-        try {
-     
-          ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',Markup.keyboard([
-            ['/send'],
-          ]).resize());
-          if (this.member[userId]) {
-            this.member[userId].step = "";
-            await updateMember(this.member[userId].id, "");
-            const paths = await downloadMedia(this.sessions[userId].media);
-            const newEvent: Event = await saveEvent(this.sessions[userId], this.member[userId].id);
-            await saveMedia(paths, newEvent);
-            delete this.sessions[userId];
-     
-          }
-        } catch (error) {
-          console.error('Error occurred while executing action "mediaDecline":', error);
-        }
-  
-      }
+      
+      this.member[userId].step = 'senderType'
+      updateMember(this.member[userId].id,'senderType')
+      ctx.telegram.sendMessage(ctx.chat.id, this.data['SENDER_TYPE_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: this.data['REPORTER'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
+                callback_data: "reporter",
+              },
+              {
+                text: this.data['BLOGGER'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
+                callback_data: "blogger",
+              },
+            ],
+          ],
+        },
+      });
+
       
     });
   }
@@ -271,7 +250,36 @@ export class Bot {
         } else if (this.member[userId].step === "media") {
           const description = ctx.message.text;
           this.sessions[userId].description = description;
-          ctx.telegram.sendMessage(ctx.chat.id, this.data['MEDIA_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك');
+   
+
+          if(this.sessions[userId].takeFeedBack){
+            ctx.replyWithHTML(this.data['FEEDBACK_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
+              reply_markup: {
+                force_reply: true,
+              },
+            });
+            this.member[userId].step = 'feedback';
+            await updateMember(this.member[userId].id,'feedback')
+          }else{
+            try {
+         
+              ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',Markup.keyboard([
+                ['/send'],
+              ]).resize());
+              if (this.member[userId]) {
+                this.member[userId].step = "";
+                await updateMember(this.member[userId].id, "");
+                const paths = await downloadMedia(this.sessions[userId].media);
+                const newEvent: Event = await saveEvent(this.sessions[userId], this.member[userId].id);
+                await saveMedia(paths, newEvent);
+                delete this.sessions[userId];
+         
+              }
+            } catch (error) {
+              console.error('Error occurred while executing action "mediaDecline":', error);
+            }
+      
+          }
         }else if(this.member[userId].step === 'feedback'){
           ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',Markup.keyboard([
             ['/send'],
