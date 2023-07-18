@@ -259,6 +259,7 @@ export class Bot {
               },
             });
             this.member[userId].step = 'feedback';
+            console.log(this.member)
             await updateMember(this.member[userId].id,'feedback')
           }else{
             try {
@@ -284,7 +285,7 @@ export class Bot {
           ctx.replyWithHTML(this.data['GRATITUDE_MESSAGEX'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',Markup.keyboard([
             ['/send'],
           ]).resize());
-          this.member[userId].step = "";
+ 
           await updateMember(this.member[userId].id, "");
           const paths = await downloadMedia(this.sessions[userId].media);
         
