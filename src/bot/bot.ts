@@ -3,7 +3,7 @@ import { message } from "telegraf/filters";
 import dotenv from "dotenv";
 import { EventInterface } from "../types/event.type";
 import { downloadMedia, convertToHash } from "./helpers";
-import { saveEvent, saveMedia, getBotMessages, checkIfUserExist, getOrCreateMember, updateMember } from './api';
+import { saveEvent, saveMedia, getBotMessages, getOrCreateMember, updateMember } from './api';
 import { Event } from "../entities/Event";
 import { TypeEnum } from "../enums/TypeEnum";
 import { Member } from '../entities/Member';
@@ -31,6 +31,7 @@ export class Bot {
       console.error('Bot error occurred:', error);
     });
 
+ 
     this.updateData();
     this.setupCommands();
     this.setupActions();
@@ -48,6 +49,7 @@ export class Bot {
   private setupCommands(): void {
     this.bot.command("start", async (ctx: Context) => {
       try {
+ 
         if (ctx.message && ctx.message.from) {
           const userId = ctx.message.from.id;
           this.member[userId] = await getOrCreateMember(userId);
@@ -95,25 +97,26 @@ export class Bot {
         }
 
         ctx.telegram.sendMessage(ctx.chat.id, this.data['SENDER_TYPE_QUESTION'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك', {
+ 
           reply_markup: {
             inline_keyboard: [
               [
+        
                 {
-                  text: this.data['REPORTER'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
-                  callback_data: "reporter",
-                },
-                {
-                  text: this.data['BLOGGER'] || 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
-                  callback_data: "blogger",
+                  text: "انهاء"|| 'الرسالة غير متوفرة الآن لكن تم تسجيل معلوماتك',
+                  callback_data: "mediaDecline",
                 },
               ],
             ],
           },
         });
+        this.member!.step = "media";
       } catch (error) {
-        console.error('Error occurred while executing command "send":', error);
+        console.error('Error occurred while executing action "mediaAccept":', error);
       }
     });
+
+    
   }
 
   private setupActions(): void {
@@ -144,7 +147,7 @@ export class Bot {
         console.error('Error occurred while executing action "reporter":', error);
       }
     });
-
+ 
     this.bot.action("blogger", async (ctx: any) => {
       const userId = ctx.from?.id;
 
@@ -172,6 +175,7 @@ export class Bot {
       } catch (error) {
         console.error('Error occurred while executing action "blogger":', error);
       }
+ 
     });
 
     this.bot.action("location", async (ctx: any) => {
@@ -190,6 +194,7 @@ export class Bot {
       }
     });
 
+ 
     this.bot.action("mediaAccept", async (ctx: any) => {
       const userId = ctx.from?.id;
       try {
@@ -237,6 +242,7 @@ export class Bot {
   
       }
       
+ 
     });
   }
 
@@ -244,7 +250,9 @@ export class Bot {
 
   private setupMessageHandlers(): void {
     this.bot.on(message("text"), async (ctx) => {
+ 
       const userId = ctx.from?.id;
+ 
       try {
         if (this.member[userId].step === "location") {
           const reporterName = ctx.message.text;
@@ -266,6 +274,7 @@ export class Bot {
               force_reply: true,
             },
           });
+ 
           this.member[userId].step = "media";
           await updateMember(this.member[userId].id, "media");
         } else if (this.member[userId].step === "media") {
@@ -284,6 +293,7 @@ export class Bot {
           const newEvent: Event = await saveEvent(this.sessions[userId], this.member[userId].id);
           await saveMedia(paths, newEvent);
           delete this.sessions[userId];
+ 
         }
       } catch (error) {
         console.error('Error occurred while handling message of type "text":', error);
@@ -326,9 +336,11 @@ export class Bot {
     });
 
     this.bot.on(message("video"), async (ctx) => {
+ 
       const userId = ctx.from?.id;
       if (userId) {
         const member = this.member[userId];
+ 
 
         try {
           if (member && member.step === "media") {

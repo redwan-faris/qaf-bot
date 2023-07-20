@@ -12,6 +12,9 @@ export class Member {
     @Column({type:'varchar',name:'full_name',nullable:true})
     full_name:string;
 
+    @Column({ length: 255 ,type:"varchar",nullable:true})
+    address: string;
+
     @Column({type:'timestamp',name:'last_used',nullable:true})
     lastUsed:Date;
 

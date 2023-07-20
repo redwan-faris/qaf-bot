@@ -65,6 +65,7 @@ export class MemberService {
             const member: Member = new Member();
             member.full_name = memberDto.full_name;
             member.userBotId = memberDto.memberId;
+            member.address = memberDto.address;
             member.lastUsed = new Date();
             return await this.memberRepository.save(member);
         } catch (error: any) {

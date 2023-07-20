@@ -9,8 +9,7 @@ export class Event {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 255 ,type:"varchar"})
-  address: string;
+
 
   @Column({ type: 'enum', enum: TypeEnum})
   type: TypeEnum;
